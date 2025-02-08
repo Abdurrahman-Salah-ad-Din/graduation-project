@@ -1,0 +1,8 @@
+django==5.1.5
+djangoRestframework
+pyyaml
+requests
+django-cors-headers
+django-silk
+drf-spectacular
+pillow
