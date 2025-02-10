@@ -1,3 +1,8 @@
 from django.shortcuts import render
+from rest_framework import viewsets, generics
+from .models import Radiologist
+from .serializers import RadiologistRegisterSerializer
 
-# Create your views here.
+class RadiologistViewSet(viewsets.ModelViewSet):
+    queryset = Radiologist.objects.all()
+    serializer_class = RadiologistRegisterSerializer
