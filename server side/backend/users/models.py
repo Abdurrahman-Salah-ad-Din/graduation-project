@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
+from phonenumber_field.modelfields import PhoneNumberField
 
 class RadiologistManager(UserManager):
     def create_user(self, email, password = None, **extra_fields):
@@ -36,7 +37,7 @@ class Radiologist(AbstractUser):
     job = models.CharField(max_length=1,choices=JobChoices.choices)
     gender = models.CharField(max_length=1, choices=GenderChoices.choices)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=12, unique=True, blank=True, null=True)
+    phone_number = PhoneNumberField()
     username = None
 
     USERNAME_FIELD = 'email'
