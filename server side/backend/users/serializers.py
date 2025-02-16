@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Radiologist
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RadiologistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,12 +43,28 @@ class RadiologistSerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
-
         if self.__is_admin():
             [setattr(fields[attribute], 'read_only', False) for attribute in ['is_staff', 'is_active', 'is_superuser', 'email'] if attribute in fields]
-
         return fields
     
     def __is_admin(self):
         request = self.context.get('request')
         return request and request.user and request.user.is_staff
+
+
+class LoginSerializer(TokenObtainPairSerializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True
+    )
+
+    def validate(self, attr):
+        data = super().validate(attr)
+        data.update(
+            {
+                'radiologist': RadiologistSerializer(self.user).data
+            }
+        )
+        return data
