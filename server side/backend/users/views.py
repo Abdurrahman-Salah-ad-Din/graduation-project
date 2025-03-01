@@ -1,9 +1,10 @@
+import email
 from rest_framework import viewsets, permissions, views, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Radiologist
-from .serializers import RadiologistSerializer, LoginSerializer
+from .serializers import RadiologistSerializer, LoginSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 
 class RadiologistViewSet(viewsets.ModelViewSet):
     queryset = Radiologist.objects.all()
@@ -30,3 +31,23 @@ class LogoutView(views.APIView):
             return Response({"details", "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": f"Error invalidating token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class PasswordResetRequestView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(request.data).data
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "OTP sent to your email."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PasswordResetConfirmView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Password has been reset."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
