@@ -51,14 +51,16 @@ class Radiologist(AbstractUser):
         return f"{self.get_full_name()}"
     
 class PasswordResetOTP(models.Model):
+    EXPIRATION_MINUTES = 15
+
     user = models.ForeignKey(Radiologist, on_delete=models.CASCADE, related_name='reset_otps')
     otp = models.CharField(max_length=8)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
 
     def is_expired(self):
-        expiration_time = self.created_at + timedelta(minutes=15)
+        expiration_time = self.created_at + timedelta(minutes=self.EXPIRATION_MINUTES)
         return timezone.now() > expiration_time
     
     def __str__(self):
-        return f"OTP for {self.user.email} is {self.otp}, created at {self.created_at} and it is {"used" if self.is_used else "not used"}."
+        return f"OTP for {self.user.email} is {self.otp}, created at {self.created_at} and it is {'used' if self.is_used else 'not used'}."
