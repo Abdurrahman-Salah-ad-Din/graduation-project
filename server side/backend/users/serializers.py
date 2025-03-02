@@ -1,5 +1,4 @@
-from unittest.util import _MAX_LENGTH
-from utils import generate_otp
+from .utils import generate_otp
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import serializers
@@ -97,16 +96,49 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         send_mail(subject, message, from_mail, recipient_list)
 
         return reset_record
-    
-class PasswordResetConfirmSerializer(serializers.Serializer):
+
+class OTPVerificationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     otp = serializers.CharField(max_length=8)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        otp = attrs.get('otp')
+
+        try:
+            user = Radiologist.objects.get(email=email)
+        except Radiologist.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or OTP.")
+
+        try:
+            otp_record = user.reset_otps.filter(is_used=False).latest('created_at')
+        except PasswordResetOTP.DoesNotExist:
+            raise serializers.ValidationError("No active OTP found. Please request a new one.")
+
+        if otp_record.otp != otp:
+            raise serializers.ValidationError("Invalid OTP provided.")
+        
+        if otp_record.is_expired():
+            raise serializers.ValidationError("The OTP has expired. Please request a new one.")
+
+        attrs['user'] = user
+        attrs['otp_record'] = otp_record
+
+        return user
+    
+    def save(self):
+        reset_record = self.validated_data['reset_record']
+        reset_record.is_verified = True
+        reset_record.save()
+        return reset_record
+
+class PasswordUpdateSerializer(serializers.Serializer):
+    email = serializers.EmailField()
     new_password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
         email = attrs.get('email')
-        otp_input = attrs.get('otp')
 
         if attrs['new_password'] != attrs['confirm_password']:
             raise serializers.ValidationError("Passwords do not match")
@@ -117,13 +149,10 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid email or OTP.")
 
         try:
-            reset_record = user.reset_otps.filter(is_used=False).latest('created_at')
+            reset_record = user.reset_otps.filter(is_used=False, is_verified=True).latest('created_at')
         except PasswordResetOTP.DoesNotExist:
-            raise serializers.ValidationError("No active OTP found. Please request a new one.")
+            raise serializers.ValidationError("No verified OTP found. Please verify your OTP first.")
         
-        if reset_record.otp != otp_input:
-            raise serializers.ValidationError("Invalid OTP provided.")
-            
         if reset_record.is_expired():
             raise serializers.ValidationError("The OTP has expired. Please request a new one.")
 
