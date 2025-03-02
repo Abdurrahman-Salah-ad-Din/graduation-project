@@ -1,10 +1,9 @@
-import email
-from rest_framework import viewsets, permissions, views, status
+from rest_framework import viewsets, permissions, views, status, generics
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Radiologist
-from .serializers import RadiologistSerializer, LoginSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+from .serializers import RadiologistSerializer, LoginSerializer, PasswordResetRequestSerializer, OTPVerificationSerializer, PasswordUpdateSerializer 
 
 class RadiologistViewSet(viewsets.ModelViewSet):
     queryset = Radiologist.objects.all()
@@ -32,22 +31,26 @@ class LogoutView(views.APIView):
         except Exception as e:
             return Response({"error": f"Error invalidating token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
         
-class PasswordResetRequestView(views.APIView):
+class BasePasswordResetView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = None
+    success_message = "Success"
 
     def post(self, request):
-        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "OTP sent to your email."}, status=status.HTTP_200_OK)
+            return Response({"detail": self.success_message}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class PasswordResetConfirmView(views.APIView):
-    permission_classes = [permissions.AllowAny]
-    
-    def post(self, request):
-        serializer = PasswordResetConfirmSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Password has been reset."}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetRequestView(BasePasswordResetView):
+    serializer_class = PasswordResetRequestSerializer
+    success_message = "OTP sent to your email."
+
+class OTPVerificationView(BasePasswordResetView):
+    serializer_class = OTPVerificationSerializer
+    success_message = "OTP verified. You can now reset your password."
+
+class PasswordUpdateView(BasePasswordResetView):
+    serializer_class= PasswordUpdateSerializer
+    success_message = "Password has been reset."
