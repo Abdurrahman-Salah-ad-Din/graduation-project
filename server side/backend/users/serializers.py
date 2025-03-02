@@ -1,4 +1,4 @@
-from .utils import generate_otp
+from core.utils import get_secret_code
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import serializers
@@ -83,7 +83,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         return value
     
     def save(self):
-        otp_value = generate_otp()
+        otp_value = get_secret_code()
         reset_record = PasswordResetOTP.objects.create(user = self.user,otp = otp_value)
 
         subject = "OTP to reset you account password"
@@ -108,23 +108,23 @@ class OTPVerificationSerializer(serializers.Serializer):
         try:
             user = Radiologist.objects.get(email=email)
         except Radiologist.DoesNotExist:
-            raise serializers.ValidationError("Invalid email or OTP.")
+            raise serializers.ValidationError("User with this email does not exist.")
 
         try:
-            otp_record = user.reset_otps.filter(is_used=False).latest('created_at')
+            reset_record = user.reset_otps.filter(is_used=False).latest('created_at')
         except PasswordResetOTP.DoesNotExist:
             raise serializers.ValidationError("No active OTP found. Please request a new one.")
 
-        if otp_record.otp != otp:
+        if reset_record.otp != otp:
             raise serializers.ValidationError("Invalid OTP provided.")
         
-        if otp_record.is_expired():
+        if reset_record.is_expired():
             raise serializers.ValidationError("The OTP has expired. Please request a new one.")
 
         attrs['user'] = user
-        attrs['otp_record'] = otp_record
+        attrs['reset_record'] = reset_record
 
-        return user
+        return attrs
     
     def save(self):
         reset_record = self.validated_data['reset_record']
@@ -146,7 +146,7 @@ class PasswordUpdateSerializer(serializers.Serializer):
         try:
             user = Radiologist.objects.get(email=email)
         except Radiologist.DoesNotExist:
-            raise serializers.ValidationError("Invalid email or OTP.")
+            raise serializers.ValidationError("User with this email does not exist.")
 
         try:
             reset_record = user.reset_otps.filter(is_used=False, is_verified=True).latest('created_at')
@@ -162,6 +162,8 @@ class PasswordUpdateSerializer(serializers.Serializer):
         return attrs
 
     def save(self):
+        self.user.reset_otps.filter(is_used=False).update(is_used=True)
+
         user = self.validated_data['user']
         new_password = self.validated_data['new_password']
         reset_record = self.validated_data['reset_record']
