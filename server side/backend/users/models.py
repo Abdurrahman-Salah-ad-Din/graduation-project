@@ -57,10 +57,11 @@ class PasswordResetOTP(models.Model):
     otp = models.CharField(max_length=8)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     def is_expired(self):
         expiration_time = self.created_at + timedelta(minutes=self.EXPIRATION_MINUTES)
         return timezone.now() > expiration_time
     
     def __str__(self):
-        return f"OTP for {self.user.email} is {self.otp}, created at {self.created_at} and it is {'used' if self.is_used else 'not used'}."
+        return f"OTP for {self.user.email} is {self.otp}, created at {self.created_at}. it is {'used' if self.is_used else 'not used'} and {'verified' if self.is_verified else 'not verified'}."
