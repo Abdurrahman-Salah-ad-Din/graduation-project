@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from users.models import Radiologist
 from core.utils import get_secret_code
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Patient(models.Model):
     class GenderChoices(models.TextChoices):
@@ -12,11 +13,12 @@ class Patient(models.Model):
         return get_secret_code(6)
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     code = models.CharField(max_length=6, default=generate_random_code)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     date_of_birth = models.DateField()
+    phone_number = PhoneNumberField()
     gender = models.CharField(max_length=1, choices=GenderChoices)
     created_by = models.ForeignKey(Radiologist, on_delete=models.SET_NULL, null=True, blank=True, related_name="created_patients")
     radiologists = models.ManyToManyField(Radiologist, through='PatientRadiologistAccess', related_name='accessible_patients')
