@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Patient, PatientRadiologistAccess
-from users.models import Radiologist
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,19 +8,21 @@ class PatientSerializer(serializers.ModelSerializer):
             'id', 'email', 'first_name', 'last_name', 'date_of_birth', 
             'gender', 'code', 'created_by',
         )
-        read_only_field = ('id', 'code', 'created_by',)
+        read_only_fields = ('id', 'code', 'created_by',)
 
     def create(self, validated_data):
         request = self.context.get('request')
         validated_data['created_by'] = request.user
-        return super().create(validated_data)
+        patient = super().create(validated_data)
+        PatientRadiologistAccess.objects.create(patient=patient, radiologist=request.user)
+        return patient
     
 class PatientAccessRequestSerialzier(serializers.Serializer):
     code = serializers.CharField(max_length=6)
 
     def validate_code(self, value):
         try:
-            patient = Patient.objects.get(code=self.code)
+            patient = Patient.objects.get(code=value)
         except Patient.DoesNotExist:
             raise serializers.ValidationError("Invalid patient code.")
         self.context['patient'] = patient
