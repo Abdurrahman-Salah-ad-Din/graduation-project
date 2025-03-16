@@ -16,7 +16,7 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     date_of_birth = models.DateField()
-    phone_number = PhoneNumberField()
+    phone_number = PhoneNumberField(blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GenderChoices)
     created_by = models.ForeignKey(Radiologist, on_delete=models.SET_NULL, null=True, blank=True, related_name="created_patients")
     radiologists = models.ManyToManyField(Radiologist, through='PatientRadiologistAccess', related_name='accessible_patients')
