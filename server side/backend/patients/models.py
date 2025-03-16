@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 from users.models import Radiologist
 from core.utils import get_secret_code
@@ -12,7 +11,6 @@ class Patient(models.Model):
     def generate_random_code():
         return get_secret_code(6)
     
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     email = models.EmailField(unique=True)
     code = models.CharField(max_length=6, default=generate_random_code)
     first_name = models.CharField(max_length=40)
