@@ -1,12 +1,15 @@
 from rest_framework import serializers
 from .models import Patient, PatientRadiologistAccess
+from scans.serializers import PatientScanSerializer
 
 class PatientSerializer(serializers.ModelSerializer):
+    scans = PatientScanSerializer(many=True, read_only=True)
+
     class Meta:
         model = Patient
         fields = (
             'id', 'email', 'first_name', 'last_name', 'date_of_birth', 
-            'gender', 'code', 'created_by',
+            'gender', 'code', 'created_by', 'scans',
         )
         read_only_fields = ('id', 'code', 'created_by',)
 
