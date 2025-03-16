@@ -1,6 +1,11 @@
 from django.db import models
 from patients.models import Patient
 
+class OrganChoices(models.TextChoices):
+        HEART = 'H', 'Heart'
+        BRAIN = 'B', 'Brain'
+        CHEST = 'C', 'Chest'
+
 class Disease(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -8,15 +13,10 @@ class Disease(models.Model):
         return self.name
 
 class PatientScan(models.Model):
-    class OrganChoices(models.TextChoices):
-        HEART = 'H', 'Heart'
-        BRAIN = 'B', 'Brain'
-        CHEST = 'C', 'Chest'
-
-    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, related_name='scans')
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, related_name='scans', null=True)
     image_scan_url = models.ImageField(upload_to='patient_scans/')
     organ = models.CharField(max_length=1, choices=OrganChoices)
-    additional_info = models.CharField(blank=True, null=True)
+    additional_info = models.CharField(blank=True, null=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
