@@ -22,7 +22,7 @@ class Patient(models.Model):
     radiologists = models.ManyToManyField(Radiologist, through='PatientRadiologistAccess', related_name='accessible_patients')
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} diagnosed by {self.diagnosed_by}"
+        return f"{self.first_name} {self.last_name} diagnosed by {self.created_by}"
     
 class PatientRadiologistAccess(models.Model):
     radiologist = models.ForeignKey(Radiologist, on_delete=models.CASCADE)
