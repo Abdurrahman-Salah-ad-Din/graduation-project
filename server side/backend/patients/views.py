@@ -6,13 +6,18 @@ from .serializers import PatientAccessRequestSerialzier, PatientSerializer
 from .models import Patient
 
 class PatientViewSet(viewsets.ModelViewSet):
-    queryset = Patient.objects.select_related('created_by').prefetch_related("radiologists")
+    queryset = Patient.objects.select_related('created_by').prefetch_related(
+        'radiologists',
+        'scans',
+        'scans__predictions',
+        'scans__predictions__disease'
+    )
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return super().get_queryset().filter(Q(created_by=user) | Q(radiologists=user)).distinct()
+        return self.queryset.filter(Q(created_by=user) | Q(radiologists=user)).distinct()
 
     def get_serializer_class(self):
         if self.action == "grant_access":
