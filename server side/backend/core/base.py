@@ -17,7 +17,6 @@ class BaseAIModel(abc.ABC):
         """
         pass
     
-    @abc.abstractmethod
     def run(self, image_path):
         """
         Template method: preprocess the image and then predict.
