@@ -16,7 +16,8 @@ class TFClassificationModel(BaseAIModel):
         image_array = np.expand_dims(image_array, axis=0)
         return image_array
 
-    def predict(self, preprocessed_image):
+    def predict(self, image_path):
+        preprocessed_image = self.preprocessing(image_path)
         predictions = self.model.predict(preprocessed_image)[0]
         if self.labels and len(self.labels) == len(predictions):
             return {self.labels[i]: float(predictions[i]) for i in range(len(predictions))}
