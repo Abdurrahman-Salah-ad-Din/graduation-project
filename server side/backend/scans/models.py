@@ -18,6 +18,7 @@ class PatientScan(models.Model):
     organ = models.CharField(max_length=1, choices=OrganChoices)
     additional_info = models.CharField(blank=True, null=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    diseases = models.ManyToManyField(Disease, through='ScanDiseasePrediction')
 
     def __str__(self):
         return f"Scan {self.id} for {self.patient.first_name} {self.patient.last_name} ({self.organ})."
