@@ -27,7 +27,7 @@ class LogoutView(views.APIView):
             refresh_token = request.data['refresh_token']
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({"detail": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
+            return Response({"detail": "Logout successful."}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": f"Error invalidating token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -40,7 +40,7 @@ class BasePasswordResetView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": self.success_message}, status=status.HTTP_200_OK)
+            return Response({"details": self.success_message}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordResetRequestView(BasePasswordResetView):
