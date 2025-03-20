@@ -14,10 +14,10 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = (
-            'id', 'email', 'first_name', 'last_name', 'date_of_birth', 
-            'gender', 'code', 'created_by', 'scans',
+            'id', 'email', 'first_name', 'last_name', 'date_of_birth', 'created_at',
+            'phone_number', 'gender', 'code', 'created_by', 'scans',
         )
-        read_only_fields = ('id', 'code', 'created_by',)
+        read_only_fields = ('id', 'code', 'radiologists.created_at', 'created_at',)
 
     def create(self, validated_data):
         """

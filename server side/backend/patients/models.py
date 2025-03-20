@@ -14,6 +14,7 @@ class Patient(models.Model):
         date_of_birth: Patient's birth date.
         phone_number: Optional phone number.
         gender: Patient's gender (choices provided by GenderChoices).
+        created_at: The date-time when the patient is created.
         created_by: The Radiologist (doctor) who created this patient record.
         radiologists: Many-to-many relationship with Radiologist through a junction table.
     """
@@ -33,6 +34,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=40)
     date_of_birth = models.DateField()
     phone_number = PhoneNumberField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(max_length=1, choices=GenderChoices)
     # The Radiologist who created the patient record.
     created_by = models.ForeignKey(Radiologist, on_delete=models.SET_NULL, null=True, blank=True, related_name="created_patients")
