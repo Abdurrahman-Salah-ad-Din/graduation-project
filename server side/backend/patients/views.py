@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework import views, viewsets, permissions, status
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .serializers import PatientAccessRequestSerialzier, PatientSerializer
@@ -41,5 +41,5 @@ class PatientViewSet(viewsets.ModelViewSet):
         serializer = PatientAccessRequestSerialzier(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Access granted."}, status=status.HTTP_200_OK)
+            return Response({"details": "Access granted."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
