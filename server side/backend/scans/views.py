@@ -1,12 +1,16 @@
 from .models import Disease, OrganChoices, PatientScan, ScanDiseasePrediction
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, mixins
 from .serializers import PatientScanSerializer
 from core.ai.factory import get_ai_model
 from django.db import transaction
 from django.db.models import Prefetch
 
-class PatientScanView(viewsets.ModelViewSet):
-    queryset = PatientScan.objects.select_related('patient', 'patient__created_by',).prefetch_related(Prefetch('predictions', queryset=ScanDiseasePrediction.objects.select_related('disease'))).all()
+class PatientScanView(mixins.ListModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.DestroyModelMixin,
+                      mixins.CreateModelMixin,
+                      viewsets.GenericViewSet):
+    queryset = PatientScan.objects.select_related('patient').prefetch_related(Prefetch('predictions', queryset=ScanDiseasePrediction.objects.select_related('disease')), 'predictions__disease').all()
     serializer_class = PatientScanSerializer
     permission_classes = [permissions.IsAuthenticated]
 
