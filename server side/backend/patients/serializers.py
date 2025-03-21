@@ -17,7 +17,7 @@ class PatientSerializer(serializers.ModelSerializer):
             'id', 'email', 'first_name', 'last_name', 'date_of_birth', 'created_at',
             'phone_number', 'gender', 'code', 'created_by', 'scans',
         )
-        read_only_fields = ('id', 'code', 'radiologists.created_at', 'created_at',)
+        read_only_fields = ('id', 'code', 'created_at', 'created_by')
 
     def create(self, validated_data):
         """
