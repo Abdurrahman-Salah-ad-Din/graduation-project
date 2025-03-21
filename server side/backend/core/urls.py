@@ -7,6 +7,8 @@ from patients.views import PatientViewSet
 from scans.views import PatientScanView
 from drf_spectacular.views import SpectacularRedocView
 from django.http import FileResponse
+from django.conf.urls.static import static
+from django.conf import settings
 import os
 
 def openapi_yaml_view(request):
@@ -47,3 +49,6 @@ urlpatterns = [
 ]
 
 urlpatterns += router.urls
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
