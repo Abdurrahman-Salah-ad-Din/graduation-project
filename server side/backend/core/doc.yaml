@@ -1,0 +1,1562 @@
+openapi: 3.0.0
+info:
+  title: Disease Diagnosis API
+  description: API for managing radiologists, patients, scans, and disease predictions.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/
+    description: Local development server
+
+paths:
+  /users:
+    get:
+      summary: List all radiologists
+      description: Retrieve a list of all registered radiologists. Requires admin privileges.
+      operationId: getRadiologists
+      tags:
+        - Users
+      security:
+        - BearerAuth:
+      responses:
+        '200':
+          description: A successful response containing a list of radiologists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  - id: 1
+                    email: doctor1@example.com
+                    first_name: John
+                    last_name: Doe
+                    phone_number: "+1234567890"
+                    gender: M
+                    job: D
+                    is_staff: false
+                    is_active: true
+                    date_of_birth: "1980-01-01"
+                    is_superuser: false
+                  - id: 2
+                    email: nurse1@example.com
+                    first_name: Jane
+                    last_name: Smith
+                    phone_number: "+19876543210"
+                    gender: F
+                    job: N
+                    is_staff: true
+                    is_active: false
+                    date_of_birth: "1990-05-15"
+                    is_superuser: false
+        '403':
+          description: Forbidden - requires admin privileges
+
+    post:
+      summary: Create a new radiologist
+      description: Register a new radiologist.
+      operationId: createRadiologist
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadiologistCreateRequest'
+      responses:
+        '201':
+          description: Radiologist created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 3
+                  email: newdoctor@example.com
+                  first_name: Peter
+                  last_name: Jones
+                  job: D
+                  gender: M
+                  phone_number: "+1122334455"
+                  date_of_birth: "1975-11-20"
+                  is_staff: false
+                  is_active: true
+                  is_superuser: false
+        '400':
+          description: Invalid input
+
+  /users/{id}:
+    get:
+      summary: Get a specific radiologist
+      description: Retrieve details of a specific radiologist.
+      operationId: getRadiologistById
+      tags:
+        - Users
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the radiologist to retrieve.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Details of the radiologist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  email: doctor1@example.com
+                  first_name: John
+                  last_name: Doe
+                  phone_number: "+1234567890"
+                  gender: M
+                  job: D
+                  is_staff: true
+                  is_active: true
+                  date_of_birth: "1980-01-01"
+                  is_superuser: true
+        '404':
+          description: Radiologist not found
+
+    put:
+      summary: Update a radiologist
+      description: Update the details of an existing radiologist.
+      operationId: updateRadiologist
+      tags:
+        - Users
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the radiologist to update.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadiologistUpdateRequest'
+      responses:
+        '200':
+          description: Radiologist updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  email: doctor1@example.com
+                  first_name: John
+                  last_name: Doe
+                  phone_number: "+1234567890"
+                  gender: M
+                  job: D
+                  is_staff: true
+                  is_active: true
+                  date_of_birth: "1980-01-01"
+                  is_superuser: true
+        '400':
+          description: Invalid input
+        '404':
+          description: Radiologist not found
+
+    patch:
+      summary: Partially update a radiologist
+      description: Partially update the details of an existing radiologist.
+      operationId: partialUpdateRadiologist
+      tags:
+        - Users
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the radiologist to update.
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadiologistPartialUpdateRequest'
+            example:
+              password: "new pa$$word"
+      responses:
+        '200':
+          description: Radiologist partially updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  email: doctor1@example.com
+                  first_name: John
+                  last_name: Doe
+                  job: D
+                  gender: M
+                  phone_number: "+1234567890"
+                  date_of_birth: "1980-01-01"
+        '400':
+          description: Invalid input
+        '404':
+          description: Radiologist not found
+
+    delete:
+      summary: Delete a radiologist
+      description: Delete a specific radiologist. Requires admin privileges.
+      operationId: deleteRadiologist
+      tags:
+        - Users
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the radiologist to delete.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Radiologist deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data: null
+        '403':
+          description: Forbidden - requires admin privileges
+        '404':
+          description: Radiologist not found
+
+  /users/login:
+    post:
+      summary: Login a radiologist
+      description: Authenticate a radiologist and return JWT access and refresh tokens.
+      operationId: loginRadiologist
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  access: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjI3MjYwMDAwLCJleHAiOjE2MjcyNjM2MDB9.example"
+                  refresh: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjI3MjYwMDAwLCJleHAiOjE2Mzk4NzIwMDB9.example"
+                  radiologist:
+                    id: 1
+                    email: doctor1@example.com
+                    first_name: John
+                    last_name: Doe
+                    phone_number: "+1234567890"
+                    gender: M
+                    job: D
+                    is_staff: true
+                    is_active: true
+                    date_of_birth: "1980-01-01"
+                    is_superuser: false
+        '401':
+          description: Invalid credentials
+
+  /users/logout:
+    post:
+      summary: Logout a radiologist
+      description: Blacklist the refresh token to log out the user.
+      operationId: logoutRadiologist
+      tags:
+        - Users
+      security:
+        - BearerAuth:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '205':
+          description: Logout successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                data:
+                  details: Logout successful
+                errors: null
+        '400':
+          description: Invalid refresh token
+
+  /users/password-reset:
+    post:
+      summary: Request password reset
+      description: Request a password reset by providing the registered email address. An OTP will be sent to the email.
+      operationId: requestPasswordReset
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                data:
+                  details: OTP sent to your email.
+                errors: null
+        '404':
+          description: User with this email does not exist
+
+  /users/password-reset-confirm:
+    post:
+      summary: Verify OTP for password reset
+      description: Verify the OTP received for password reset.
+      operationId: verifyPasswordResetOTP
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTPVerificationRequest'
+      responses:
+        '200':
+          description: OTP verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                data:
+                  details: OTP verified. You can now reset your password.
+                errors: null
+        '400':
+          description: Invalid OTP or expired OTP
+        '404':
+          description: User with this email does not exist
+
+  /users/password-update:
+    post:
+      summary: Update password after reset
+      description: Update the password after successfully verifying the OTP.
+      operationId: updatePasswordAfterReset
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordUpdateRequest'
+      responses:
+        '200':
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                data:
+                  details: Password has been reset.
+                errors: null
+        '400':
+          description: Passwords do not match or invalid/expired OTP
+        '404':
+          description: User with this email does not exist
+
+  /patients:
+    get:
+      summary: List all patients
+      description: Retrieve a list of all patients accessible to the logged-in radiologist.
+      operationId: getPatients
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      responses:
+        '200':
+          description: A successful response containing a list of patients.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  - id: 1
+                    email: patient1@example.com
+                    first_name: Alice
+                    last_name: Smith
+                    date_of_birth: "1995-03-10"
+                    gender: F
+                    phone_number: "+15551234567"
+                    code: "ABCDEF"
+                    created_by: 1
+                    scans: 
+                      - id: 1
+                        patient: 1
+                        image_scan_url: http://localhost:8000/patient_scans/IM-0001-0001.jpeg
+                        organ: C
+                        additional_info: This is an additional info about the patient
+                        created_at: 2025-03-20T19:11:18.102482Z
+                        predictions: 
+                          - id: 1
+                            disease_name: Bacterial Pneumonia
+                            confidence: 0.012275750748813152
+
+                          - id: 2
+                            disease_name: COVID-19
+                            confidence: 0.0007864898652769625
+
+                          - id: 3
+                            disease_name: Normal
+                            confidence: 0.9701588153839111
+                          
+                          - id: 4
+                            disease_name: Tuberculosis
+                            confidence: 6.315520295174792e-05
+                        
+                          - id: 5
+                            disease_name: Viral Pneumonia
+                            confidence: 0.016715841367840767
+
+                      - id: 5
+                        patient: 1
+                        image_scan_url: http://localhost:8000/patient_scans/IM-0001-0001.jpeg
+                        organ: C
+                        additional_info: This is an additional info about the patient
+                        created_at: 2025-03-20T19:11:18.102482Z
+                        predictions: 
+                          - id: 6
+                            disease_name: Bacterial Pneumonia
+                            confidence: 0.012275750748813152
+
+                          - id: 7
+                            disease_name: COVID-19
+                            confidence: 0.0007864898652769625
+
+                          - id: 8
+                            disease_name: Normal
+                            confidence: 0.9701588153839111
+                          
+                          - id: 9
+                            disease_name: Tuberculosis
+                            confidence: 6.315520295174792e-05
+                        
+                          - id: 10
+                            disease_name: Viral Pneumonia
+                            confidence: 0.016715841367840767
+                  - id: 2
+                    email: patient2@example.com
+                    first_name: Bob
+                    last_name: Johnson
+                    date_of_birth: "1988-07-22"
+                    gender: M
+                    phone_number: "+15559876543"
+                    code: "GHIJKL"
+                    created_by: 1
+                    scans:  
+                      - id: 2
+                        patient: 2
+                        image_scan_url: http://localhost:8000/patient_scans/IM-0001-0001.jpeg
+                        organ: C
+                        additional_info: This is an additional info about the patient
+                        created_at: 2025-03-20T19:11:18.102482Z
+                        predictions: 
+                          - id: 11
+                            disease_name: Bacterial Pneumonia
+                            confidence: 0.012275750748813152
+
+                          - id: 12
+                            disease_name: COVID-19
+                            confidence: 0.0007864898652769625
+
+                          - id: 13
+                            disease_name: Normal
+                            confidence: 0.9701588153839111
+                          
+                          - id: 14
+                            disease_name: Tuberculosis
+                            confidence: 6.315520295174792e-05
+                        
+                          - id: 15
+                            disease_name: Viral Pneumonia
+                            confidence: 0.016715841367840767
+        '400':
+          description: Invalid input
+
+    post:
+      summary: Create a new patient
+      description: Register a new patient. Requires authentication.
+      operationId: createPatient
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCreateRequest'
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 3
+                  email: newpatient@example.com
+                  first_name: Charlie
+                  last_name: Brown
+                  date_of_birth: "2000-01-01"
+                  created_at: "2000-01-01"
+                  phone_number: "+15551122334"
+                  gender: M
+                  code: "MNOPQR"
+                  created_by: 1
+                  scans: []
+        '400':
+          description: Invalid input
+
+  /patients/{id}:
+    get:
+      summary: Get a specific patient
+      description: Retrieve details of a specific patient.
+      operationId: getPatientById
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the patient to retrieve.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Details of the patient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  email: patient1@example.com
+                  first_name: Alice
+                  last_name: Smith
+                  date_of_birth: "1995-03-10"
+                  gender: F
+                  phone_number: "+15551234567"
+                  code: "ABCDEF"
+                  created_by: 1
+                  scans:
+                    - id: 2
+                      patient: 1
+                      image_scan_url: http://localhost:8000/patient_scans/IM-0001-0001.jpeg
+                      organ: C
+                      additional_info: This is an additional info about the patient
+                      created_at: 2025-03-20T19:11:18.102482Z
+                      predictions: 
+                        - id: 11
+                          disease_name: Bacterial Pneumonia
+                          confidence: 0.012275750748813152
+
+                        - id: 12
+                          disease_name: COVID-19
+                          confidence: 0.0007864898652769625
+
+                        - id: 13
+                          disease_name: Normal
+                          confidence: 0.9701588153839111
+                        
+                        - id: 14
+                          disease_name: Tuberculosis
+                          confidence: 6.315520295174792e-05
+                      
+                        - id: 15
+                          disease_name: Viral Pneumonia
+                          confidence: 0.016715841367840767
+        '404':
+          description: Patient not found
+
+    put:
+      summary: Update a patient
+      description: Update the details of an existing patient.
+      operationId: updatePatient
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the patient to update.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientUpdateRequest'
+      responses:
+        '200':
+          description: Patient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  email: patient1@example.com
+                  first_name: Alice
+                  last_name: Smith
+                  date_of_birth: "1995-03-10"
+                  created_at: 2025-03-20T19:26:56.143807Z
+                  phone_number: "+15551234567"
+                  gender: F
+                  code: "ABCDEF"
+                  created_by: 1
+                  scans:
+                    - id: 2
+                      patient: 1
+                      image_scan_url: http://localhost:8000/patient_scans/IM-0001-0001.jpeg
+                      organ: C
+                      additional_info: This is an additional info about the patient
+                      created_at: 2025-03-20T19:11:18.102482Z
+                      predictions: 
+                        - id: 11
+                          disease_name: Bacterial Pneumonia
+                          confidence: 0.012275750748813152
+
+                        - id: 12
+                          disease_name: COVID-19
+                          confidence: 0.0007864898652769625
+
+                        - id: 13
+                          disease_name: Normal
+                          confidence: 0.9701588153839111
+                        
+                        - id: 14
+                          disease_name: Tuberculosis
+                          confidence: 6.315520295174792e-05
+                      
+                        - id: 15
+                          disease_name: Viral Pneumonia
+                          confidence: 0.016715841367840767
+        '400':
+          description: Invalid input
+        '404':
+          description: Patient not found
+
+    patch:
+      summary: Partially update a patient
+      description: Partially update the details of an existing patient.
+      operationId: partialUpdatePatient
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the patient to update.
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientPartialUpdateRequest'
+              example:
+                email: patient1@example.com
+      responses:
+        '200':
+          description: Patient partially updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  email: patient1@example.com
+                  first_name: Alice
+                  last_name: Smith
+                  date_of_birth: "1995-03-10"
+                  created_at: 2025-03-20T19:26:56.143807Z
+                  phone_number: "+15551234567"
+                  gender: F
+                  code: "ABCDEF"
+                  created_by: 1
+                  scans:
+                    - id: 2
+                      patient: 1
+                      image_scan_url: http://localhost:8000/patient_scans/IM-0001-0001.jpeg
+                      organ: C
+                      additional_info: This is an additional info about the patient
+                      created_at: 2025-03-20T19:11:18.102482Z
+                      predictions: 
+                        - id: 11
+                          disease_name: Bacterial Pneumonia
+                          confidence: 0.012275750748813152
+
+                        - id: 12
+                          disease_name: COVID-19
+                          confidence: 0.0007864898652769625
+
+                        - id: 13
+                          disease_name: Normal
+                          confidence: 0.9701588153839111
+                        
+                        - id: 14
+                          disease_name: Tuberculosis
+                          confidence: 6.315520295174792e-05
+                      
+                        - id: 15
+                          disease_name: Viral Pneumonia
+                          confidence: 0.016715841367840767
+        '400':
+          description: Invalid input
+        '404':
+          description: Patient not found
+
+    delete:
+      summary: Delete a patient
+      description: Delete a specific patient.
+      operationId: deletePatient
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the patient to delete.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Patient deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data: null
+        '404':
+          description: Patient not found
+
+  /patients/grant-access:
+    post:
+      summary: Grant access to a patient
+      description: Grant the logged-in radiologist access to a patient using an invitation code.
+      operationId: grantPatientAccess
+      tags:
+        - Patients
+      security:
+        - BearerAuth:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientAccessRequest'
+            example:
+              code: "123456"
+      responses:
+        '200':
+          description: Access granted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  details: Access granted.
+        '400':
+          description: Invalid patient code or access already exists
+
+  /scans:
+    get:
+      summary: List all scans
+      description: Retrieve a list of all patient scans accessible to the logged-in radiologist.
+      operationId: getScans
+      tags:
+        - Scans
+      security:
+        - BearerAuth:
+      responses:
+        '200':
+          description: A successful response containing a list of scans.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  - id: 1
+                    patient: 1
+                    image_scan_url: "/media/scans/scan1.jpg"
+                    organ: H
+                    additional_info: null
+                    created_at: "2023-07-26T10:00:00Z"
+                    predictions:
+                    - id: 1
+                      disease_name: Bacterial Pneumonia
+                      confidence: 0.012275750748813152
+
+                    - id: 2
+                      disease_name: COVID-19
+                      confidence: 0.0007864898652769625
+
+                    - id: 3
+                      disease_name: Normal
+                      confidence: 0.9701588153839111
+                    
+                    - id: 4
+                      disease_name: Tuberculosis
+                      confidence: 6.315520295174792e-05
+                  
+                    - id: 5
+                      disease_name: Viral Pneumonia
+                      confidence: 0.016715841367840767
+                  - id: 2
+                    patient: 2
+                    image_scan_url: "/media/scans/scan2.png"
+                    organ: B
+                    additional_info: "Some notes"
+                    created_at: "2023-07-25T14:30:00Z"
+                    predictions:
+                      - id: 11
+                        disease_name: Bacterial Pneumonia
+                        confidence: 0.012275750748813152
+
+                      - id: 12
+                        disease_name: COVID-19
+                        confidence: 0.0007864898652769625
+
+                      - id: 13
+                        disease_name: Normal
+                        confidence: 0.9701588153839111
+                      
+                      - id: 14
+                        disease_name: Tuberculosis
+                        confidence: 6.315520295174792e-05
+                    
+                      - id: 15
+                        disease_name: Viral Pneumonia
+                        confidence: 0.016715841367840767
+                    
+        '400':
+          description: Invalid input
+
+    post:
+      summary: Create a new scan
+      description: Upload a new patient scan. Requires authentication.
+      operationId: createScan
+      tags:
+        - Scans
+      security:
+        - BearerAuth:
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatientScanCreateRequest'
+      responses:
+        '201':
+          description: Scan created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 3
+                  patient: 1
+                  image_scan_url: "/media/scans/scan3.jpeg"
+                  organ: C
+                  additional_info: null
+                  created_at: "2023-07-26T11:15:00Z"
+                  predictions:
+                      - id: 6
+                        disease_name: Bacterial Pneumonia
+                        confidence: 0.012275750748813152
+
+                      - id: 7
+                        disease_name: COVID-19
+                        confidence: 0.0007864898652769625
+
+                      - id: 8
+                        disease_name: Normal
+                        confidence: 0.9701588153839111
+                      
+                      - id: 9
+                        disease_name: Tuberculosis
+                        confidence: 6.315520295174792e-05
+                    
+                      - id: 10
+                        disease_name: Viral Pneumonia
+                        confidence: 0.016715841367840767
+        '400':
+          description: Invalid input
+
+  /scans/{id}:
+    get:
+      summary: Get a specific scan
+      description: Retrieve details of a specific patient scan.
+      operationId: getScanById
+      tags:
+        - Scans
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the scan to retrieve.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Details of the scan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data:
+                  id: 1
+                  patient: 1
+                  image_scan_url: "/media/scans/scan1.jpg"
+                  organ: H
+                  additional_info: null
+                  created_at: "2023-07-26T10:00:00Z"
+                  predictions:
+                    - id: 6
+                      disease_name: Bacterial Pneumonia
+                      confidence: 0.012275750748813152
+
+                    - id: 7
+                      disease_name: COVID-19
+                      confidence: 0.0007864898652769625
+
+                    - id: 8
+                      disease_name: Normal
+                      confidence: 0.9701588153839111
+                    
+                    - id: 9
+                      disease_name: Tuberculosis
+                      confidence: 6.315520295174792e-05
+                  
+                    - id: 10
+                      disease_name: Viral Pneumonia
+                      confidence: 0.016715841367840767
+        '404':
+          description: Scan not found
+
+    delete:
+      summary: Delete a scan
+      description: Delete a specific patient scan.
+      operationId: deleteScan
+      tags:
+        - Scans
+      security:
+        - BearerAuth:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the scan to delete.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Scan deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                is_success: true
+                errors: null
+                data: null
+        '404':
+          description: Scan not found
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    BaseResponse:
+      type: object
+      properties:
+        is_success:
+          type: boolean
+          description: Indicates if the request was successful.
+        errors:
+          type: array
+          items: {}
+          nullable: true
+          description: List of errors if the request failed.
+        data:
+          type: object
+          nullable: true
+          description: The actual response data.
+
+    PatientAccessRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The invitation code to access the patient.
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email address of the radiologist.
+        password:
+          type: string
+          format: password
+          description: The password of the radiologist.
+
+    LoginResponse:
+      type: object
+      properties:
+        access:
+          type: string
+          description: The access token.
+        refresh:
+          type: string
+          description: The refresh token.
+        radiologist:
+          $ref: '#/components/schemas/RadiologistDetail'
+          description: Details of the logged-in radiologist.
+
+    LogoutRequest:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          description: The refresh token to blacklist.
+
+    RadiologistBase:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: The first name of the radiologist.
+        last_name:
+          type: string
+          description: The last name of the radiologist.
+        job:
+          type: string
+          enum: [D, N]
+          description: The job title of the radiologist (D for Doctor, N for Nurse).
+        gender:
+          type: string
+          enum: [M, F]
+          description: The gender of the radiologist (M for Male, F for Female).
+        phone_number:
+          type: string
+          description: The phone number of the radiologist.
+        date_of_birth:
+          type: string
+          format: date
+          description: The date of birth of the radiologist (YYYY-MM-DD).
+
+    RadiologistCreateRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RadiologistBase'
+        - type: object
+          properties:
+            email:
+              type: string
+              format: email
+              description: The unique email address for the radiologist.
+            password:
+              type: string
+              format: password
+              description: The password for the new radiologist.
+            is_staff:
+              type: boolean
+              enum: [true, false]
+              description: Designates whether the user can log into this admin site.
+            is_active:
+              type: boolean
+              enum: [true, false]
+              description: Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+            is_superuser:
+              type: boolean
+              enum: [true, false]
+              description: Designates that this user has all permissions without explicitly assigning them.
+
+    RadiologistUpdateRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RadiologistBase'
+        - type: object
+          properties:
+            password:
+              type: string
+              format: password
+              description: The new password for the radiologist (optional).
+            is_staff:
+              type: boolean
+              enum: [true, false]
+              description: Designates whether the user can log into this admin site.
+            is_active:
+              type: boolean
+              enum: [true, false]
+              description: Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+            is_superuser:
+              type: boolean
+              enum: [true, false]
+              description: Designates that this user has all permissions without explicitly assigning them.
+    RadiologistPartialUpdateRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: The first name of the radiologist.
+        last_name:
+          type: string
+          description: The last name of the radiologist.
+        job:
+          type: string
+          enum: [D, N]
+          description: The job title of the radiologist (D for Doctor, N for Nurse).
+        gender:
+          type: string
+          enum: [M, F]
+          description: The gender of the radiologist (M for Male, F for Female).
+        phone_number:
+          type: string
+          description: The phone number of the radiologist.
+        date_of_birth:
+          type: string
+          format: date
+          description: The date of birth of the radiologist (YYYY-MM-DD).
+        password:
+          type: string
+          format: password
+          description: The new password for the radiologist.
+        is_staff:
+          type: boolean
+          enum: [true, false]
+          description: Designates whether the user can log into this admin site.
+        is_active:
+          type: boolean
+          enum: [true, false]
+          description: Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+        is_superuser:
+          type: boolean
+          enum: [true, false]
+          description: Designates that this user has all permissions without explicitly assigning them.
+    RadiologistDetail:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RadiologistBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: The unique identifier of the radiologist.
+              readOnly: true
+            email:
+              type: string
+              format: email
+              description: The unique email address of the radiologist.
+              readOnly: true
+            is_staff:
+              type: boolean
+              description: Indicates if the user is a staff member.
+              readOnly: true
+            is_active:
+              type: boolean
+              description: Indicates if the user account is active.
+              readOnly: true
+            is_superuser:
+              type: boolean
+              description: Indicates if the user has superuser privileges.
+              readOnly: true
+            last_login:
+              type: string
+              format: date-time
+              description: The date and time of the last login.
+              readOnly: true
+            date_joined:
+              type: string
+              format: date-time
+              description: The date and time when the user account was created.
+              readOnly: true
+
+    RadiologistResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier of the radiologist.
+          readOnly: true
+        email:
+          type: string
+          format: email
+          description: The unique email address for the radiologist.
+          readOnly: true
+        first_name:
+          type: string
+          description: The first name of the radiologist.
+        last_name:
+          type: string
+          description: The last name of the radiologist.
+        job:
+          type: string
+          enum: [D, N]
+          description: The job title of the radiologist (D for Doctor, N for Nurse).
+        gender:
+          type: string
+          enum: [M, F]
+          description: The gender of the radiologist (M for Male, F for Female).
+        phone_number:
+          type: string
+          description: The phone number of the radiologist.
+        date_of_birth:
+          type: string
+          format: date
+          description: The date of birth of the radiologist (YYYY-MM-DD).
+        is_staff:
+          type: boolean
+          description: Indicates if the user is a staff member.
+          readOnly: true
+        is_active:
+          type: boolean
+          description: Indicates if the user account is active.
+          readOnly: true
+        is_superuser:
+          type: boolean
+          description: Indicates if the user has superuser privileges.
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          description: The date and time of the last login.
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          description: The date and time when the user account was created.
+          readOnly: true
+
+    PasswordResetRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email address of the user requesting password reset.
+
+    OTPVerificationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email address of the user.
+        otp:
+          type: string
+          description: The One-Time Password received by the user.
+
+    PasswordUpdateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email address of the user.
+        new_password:
+          type: string
+          format: password
+          description: The new password to set.
+        confirm_password:
+          type: string
+          format: password
+          description: Confirmation of the new password.
+
+    PatientBase:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The unique email for the patient.
+        first_name:
+          type: string
+          description: The first name of the patient.
+        last_name:
+          type: string
+          description: The last name of the patient.
+        date_of_birth:
+          type: string
+          format: date
+          description: The patient's birth date (YYYY-MM-DD).
+        gender:
+          type: string
+          enum: [M, F]
+          description: The patient's gender (M for Male, F for Female).
+        phone_number:
+          type: string
+          nullable: true
+          description: The optional phone number of the patient.
+
+    PatientCreateRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PatientBase'
+
+    PatientUpdateRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PatientBase'
+
+    PatientPartialUpdateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The unique email for the patient.
+        first_name:
+          type: string
+          description: The first name of the patient.
+        last_name:
+          type: string
+          description: The last name of the patient.
+        date_of_birth:
+          type: string
+          format: date
+          description: The patient's birth date (YYYY-MM-DD).
+        gender:
+          type: string
+          enum: [M, F]
+          description: The patient's gender (M for Male, F for Female).
+        phone_number:
+          type: string
+          nullable: true
+          description: The optional phone number of the patient.
+
+    PatientResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PatientBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: The unique identifier of the patient.
+              readOnly: true
+            code:
+              type: string
+              description: The unique invitation code for the patient.
+              readOnly: true
+            created_by:
+              type: integer
+              nullable: true
+              description: The ID of the radiologist who created this patient record.
+              readOnly: true
+            scans:
+              type: array
+              items:
+                $ref: '#/components/schemas/PatientScanResponse'
+              description: A list of the patient's scans.
+              readOnly: true
+
+    PatientScanBase:
+      type: object
+      properties:
+        patient:
+          type: integer
+          description: The ID of the patient associated with the scan.
+        organ:
+          type: string
+          enum: [H, B, C]
+          description: The organ that was scanned (H for Heart, B for Brain, C for Chest).
+        additional_info:
+          type: string
+          nullable: true
+          description: Any additional information about the scan.
+
+    PatientScanCreateRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PatientScanBase'
+        - type: object
+          properties:
+            image_scan_url:
+              type: string
+              format: binary
+              description: The image file of the scan.
+
+    PatientScanUpdateRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PatientScanBase'
+        - type: object
+          properties:
+            image_scan_url:
+              type: string
+              format: binary
+              description: The updated image file of the scan (optional).
+
+    PatientScanPartialUpdateRequest:
+      type: object
+      properties:
+        patient:
+          type: integer
+          description: The ID of the patient associated with the scan.
+        image_scan_url:
+          type: string
+          format: binary
+          description: The updated image file of the scan (optional).
+        organ:
+          type: string
+          enum: [H, B, C]
+          description: The organ that was scanned (H for Heart, B for Brain, C for Chest).
+        additional_info:
+          type: string
+          nullable: true
+          description: Any additional information about the scan.
+
+    PatientScanResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PatientScanBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: The unique identifier of the patient scan.
+              readOnly: true
+            image_scan_url:
+              type: string
+              description: The URL or path to the image file of the scan.
+            created_at:
+              type: string
+              format: date-time
+              description: The date and time when the scan record was created.
+              readOnly: true
+            predictions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ScanDiseasePredictionResponse'
+              description: List of disease predictions for this scan.
+              readOnly: true
+
+    ScanDiseasePredictionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier of the prediction.
+          readOnly: true
+        disease:
+          type: string
+          description: The name of the predicted disease.
+          readOnly: true
+        confidence:
+          type: number
+          format: float
+          description: The confidence level of the disease prediction (0.0 to 1.0).
+          readOnly: true
