@@ -7,7 +7,7 @@ class OrganChoices(models.TextChoices):
         CHEST = 'C', 'Chest'
 
 class Disease(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(primary_key=True, max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -22,10 +22,10 @@ class PatientScan(models.Model):
 
     def __str__(self):
         return f"Scan {self.id} for {self.patient.first_name} {self.patient.last_name} ({self.organ})."
-    
+
 class ScanDiseasePrediction(models.Model):
     scan = models.ForeignKey(PatientScan, on_delete=models.CASCADE, related_name="predictions")
-    disease = models.ForeignKey(Disease, on_delete=models.CASCADE, max_length=255)
+    disease = models.ForeignKey(Disease, on_delete=models.CASCADE, max_length=255, related_name='diseases_name')
     confidence = models.FloatField()
 
     class Meta:
