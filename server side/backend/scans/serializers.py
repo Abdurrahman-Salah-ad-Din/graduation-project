@@ -1,15 +1,8 @@
 from patients.models import PatientRadiologistAccess, Patient
-from .models import Disease, PatientScan, ScanDiseasePrediction
+from .models import PatientScan, ScanDiseasePrediction
 from rest_framework import serializers
 
-class DiseaseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Disease
-        fields = ['id', 'name']
-
 class ScanDiseasePredictionSerializer(serializers.ModelSerializer):
-    disease = DiseaseSerializer().data.get('name')
-
     class Meta:
         model = ScanDiseasePrediction
         fields = ('id', 'disease', 'confidence',)
