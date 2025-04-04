@@ -6,18 +6,31 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from patients.views import PatientViewSet
 from scans.views import PatientScanView
 from drf_spectacular.views import SpectacularRedocView
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django.conf.urls.static import static
 from django.conf import settings
 import os
 
 def openapi_yaml_view(request):
     """
-    Serve the OpenAPI YAML file.
+    Returns the OpenAPI YAML documentation as a file response.
+
+    The YAML file is expected to be in the same directory as this module.
+    Note: We intentionally open the file without a context manager since
+    FileResponse manages the file closing.
     """
-    file_path = os.path.join(os.path.dirname(__file__), 'file.yaml')
-    with open(file_path, 'rb') as f:
-        return FileResponse(f, content_type='text/yaml')
+    # Build the absolute path to the YAML documentation.
+    file_path = os.path.join(os.path.dirname(__file__), 'doc.yaml')
+    
+    # Check if the file exists; if not, raise a 404 error.
+    if not os.path.exists(file_path):
+        raise Http404("YAML documentation not found.")
+
+    # Open the file in binary mode.
+    file_handle = open(file_path, 'rb')
+    
+    # Return a FileResponse with the appropriate content type.
+    return FileResponse(file_handle, content_type='text/yaml')
 
 router = DefaultRouter()
 router.register(r'users', RadiologistViewSet)
