@@ -1,9 +1,12 @@
 from .models import Disease, OrganChoices, PatientScan, ScanDiseasePrediction
 from rest_framework import viewsets, permissions, mixins
 from .serializers import PatientScanSerializer
+from patients.models import PatientRadiologistAccess
 from core.ai.factory import get_ai_model
 from django.db import transaction
 from django.db.models import Prefetch
+from core.exceptions import AppException
+from core.errors import ErrorCodes
 
 class PatientScanView(mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
@@ -19,6 +22,12 @@ class PatientScanView(mixins.ListModelMixin,
         return self.queryset.filter(patient__radiologists=user).distinct()
 
     def perform_create(self, serializer):
+        patient = serializer.validated_data.get('patient')
+        if not PatientRadiologistAccess.objects.filter(
+            patient=patient, radiologist=self.request.user
+        ).exists():
+            raise AppException(ErrorCodes.SCAN_006, status_code=403)
+    
         with transaction.atomic():        
             scan = serializer.save()
             predictions_data = get_ai_model(OrganChoices(scan.organ)).predict(scan.image_scan_url.path)
