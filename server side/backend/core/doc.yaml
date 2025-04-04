@@ -1,7 +1,111 @@
 openapi: 3.0.0
 info:
-  title: Disease Diagnosis API
-  description: API for managing radiologists, patients, scans, and disease predictions.
+  title: 'Medical Diagnosing System Using Artificial Intelligent API'
+  description: |
+    This is a comprehensive backend solution for modern healthcare. It provides secure authentication for radiologists, robust management of patient records with controlled access, and seamless integration of advanced AI models for scan image analysis and disease prediction.
+    
+    # Get ready
+    
+    All API responses follow a consistent format. When an error occurs, the response will have:
+    - `is_success`: Always false for error responses
+    - `errors`: Array of error objects with code, message, and optional field
+    - `data`: Always null for error responses
+    
+    Each error object contains:
+    - `code`: A specific error code (e.g., "USER_004")
+    - `message`: A human-readable error message
+    - `field`: The specific field causing the error (if applicable)
+
+    ```json
+    {
+      "is_success": false,
+      "errors": [
+        {
+          "code": "USER_004",
+          "message": "Password is required.",
+          "field": "password"
+        }
+      ],
+      "data": null
+    }
+    ```
+
+    ### Error Codes
+    
+    This API uses standardized error codes to provide clear feedback. Major categories include:
+    ### Authentication Errors (AUTH_XXX)
+    
+    | Code      | Message                                                          | Description                                      |
+    |-----------|------------------------------------------------------------------|--------------------------------------------------|
+    | AUTH_001  | Invalid credentials. Please check your email and password.       | Login failed due to wrong email or password      |
+    | AUTH_002  | Your account is inactive or has been locked.                     | User account is disabled                         |
+    | AUTH_003  | Your session has expired. Please log in again.                    | Token has expired                                |
+    | AUTH_004  | The OTP has expired. Please request a new one.                    | Password reset OTP timeout                       |
+    | AUTH_005  | This OTP has already been used.                                   | OTP was already consumed                         |
+    | AUTH_006  | Invalid OTP. Please check and try again.                          | Wrong OTP provided                               |
+    | AUTH_007  | OTP not verified. Please verify your OTP first.                   | Password reset attempted without OTP verification|
+    
+    ### User/Radiologist Errors (USER_XXX)
+    
+    | Code      | Message                                      | Description                      |
+    |-----------|----------------------------------------------|----------------------------------|
+    | USER_001  | Email address is required.                   | Missing email field              |
+    | USER_002  | First name is required.                      | Missing first name field         |
+    | USER_003  | Last name is required.                       | Missing last name field          |
+    | USER_004  | Password is required.                        | Missing password field           |
+    | USER_005  | Job title is required.                       | Missing job field                |
+    | USER_006  | Gender is required.                          | Missing gender field             |
+    | USER_007  | Phone number is required.                    | Missing phone number field       |
+    | USER_008  | Date of birth is required.                   | Missing date of birth field      |
+    | USER_009  | A user with this email already exists.       | Email already registered         |
+    | USER_010  | Invalid phone number format.                 | Phone number validation failed   |
+    | USER_011  | Invalid date format.                         | Date format validation failed    |
+    | USER_012  | Invalid job choice. Must be Doctor or Nurse. | Invalid job value                |
+    | USER_013  | Invalid gender choice. Must be Male or Female.| Invalid gender value             |
+    | USER_014  | No user found with this email address.       | User not found                   |
+    | USER_015  | Password must be at least 8 characters.      | Password too short               |
+    
+    ### Patient Errors (PAT_XXX)
+    
+    | Code      | Message                                   | Description                         |
+    |-----------|-------------------------------------------|-------------------------------------|
+    | PAT_001   | Patient email is required.                | Missing patient email               |
+    | PAT_002   | Patient first name is required.           | Missing patient first name          |
+    | PAT_003   | Patient last name is required.            | Missing patient last name           |
+    | PAT_004   | Patient gender is required.               | Missing patient gender              |
+    | PAT_005   | Patient date of birth is required.        | Missing patient DOB                 |
+    | PAT_006   | A patient with this email already exists. | Patient email already exists        |
+    | PAT_007   | Invalid patient code.                     | Wrong invitation code               |
+    | PAT_008   | You already have access to this patient.  | Duplicate access request            |
+    | PAT_009   | Patient not found.                        | Patient record not found            |
+    
+    ### Scan Errors (SCAN_XXX)
+    
+    | Code      | Message                                                   | Description                                    |
+    |-----------|-----------------------------------------------------------|------------------------------------------------|
+    | SCAN_001  | Patient ID is required.                                    | Missing patient ID for scan                    |
+    | SCAN_002  | Scan image is required.                                    | Missing scan image file                        |
+    | SCAN_003  | Organ type is required.                                    | Missing organ type                             |
+    | SCAN_004  | Invalid organ choice. Must be Heart, Brain, or Chest.      | Invalid organ value                            |
+    | SCAN_005  | Failed to upload image. Please check format and size.      | Image upload failed                            |
+    | SCAN_006  | You don't have access to this patient.                     | Unauthorized access to patient                 |
+    | SCAN_007  | Failed to process scan for prediction.                     | AI prediction failed                           |
+    | SCAN_008  | Scan not found.                                            | Scan record not found                          |
+    
+    ### Permission Errors (PERM_XXX)
+    
+    | Code      | Message                                                | Description                |
+    |-----------|--------------------------------------------------------|----------------------------|
+    | PERM_001  | Authentication required.                               | Unauthenticated request    |
+    | PERM_002  | You don't have permission to perform this action.      | Insufficient permissions   |
+    
+    ### General Errors (GEN_XXX)
+    
+    | Code      | Message                                                      | Description    |
+    |-----------|--------------------------------------------------------------|----------------|
+    | GEN_001   | An unexpected error occurred. Please try again later.        | Server error   |
+
+
   version: 1.0.0
 servers:
   - url: http://localhost:8000/
@@ -282,7 +386,7 @@ paths:
                 errors: null
                 data:
                   access: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjI3MjYwMDAwLCJleHAiOjE2MjcyNjM2MDB9.example"
-                  refresh: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjI3MjYwMDAwLCJleHAiOjE2Mzk4NzIwMDB9.example"
+                  refresh: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjI3MjYwMDAwLCJleHAiOjE2Mjk4NzIwMDB9.example"
                   radiologist:
                     id: 1
                     email: doctor1@example.com
@@ -1560,3 +1664,255 @@ components:
           format: float
           description: The confidence level of the disease prediction (0.0 to 1.0).
           readOnly: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        is_success:
+          type: boolean
+          description: Always false for error responses
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Error code
+              message:
+                type: string
+                description: Error message
+              field:
+                type: string
+                description: Optional field name associated with the error
+                nullable: true
+        data:
+          type: null
+          description: Always null for error responses
+
+    ErrorCodes:
+      type: object
+      properties:
+        authentication:
+          type: object
+          properties:
+            AUTH_001:
+              type: string
+              description: Invalid credentials. Please check your email and password.
+            AUTH_002:
+              type: string
+              description: Your account is inactive or has been locked.
+            AUTH_003:
+              type: string
+              description: Your session has expired. Please log in again.
+            AUTH_004:
+              type: string
+              description: The OTP has expired. Please request a new one.
+            AUTH_005:
+              type: string
+              description: This OTP has already been used.
+            AUTH_006:
+              type: string
+              description: Invalid OTP. Please check and try again.
+            AUTH_007:
+              type: string
+              description: OTP not verified. Please verify your OTP first.
+        user:
+          type: object
+          properties:
+            USER_001:
+              type: string
+              description: Email address is required.
+            USER_002:
+              type: string
+              description: First name is required.
+            USER_003:
+              type: string
+              description: Last name is required.
+            USER_004:
+              type: string
+              description: Password is required.
+            USER_009:
+              type: string
+              description: A user with this email already exists.
+            USER_014:
+              type: string
+              description: No user found with this email address.
+            USER_015:
+              type: string
+              description: Password must be at least 8 characters.
+        patient:
+          type: object
+          properties:
+            PAT_001:
+              type: string
+              description: Patient email is required.
+            PAT_006:
+              type: string
+              description: A patient with this email already exists.
+            PAT_007:
+              type: string
+              description: Invalid patient code.
+            PAT_008:
+              type: string
+              description: You already have access to this patient.
+            PAT_009:
+              type: string
+              description: Patient not found.
+        scan:
+          type: object
+          properties:
+            SCAN_001:
+              type: string
+              description: Patient ID is required.
+            SCAN_002:
+              type: string
+              description: Scan image is required.
+            SCAN_005:
+              type: string
+              description: Failed to upload image. Please check format and size.
+            SCAN_006:
+              type: string
+              description: You don't have access to this patient.
+            SCAN_007:
+              type: string
+              description: Failed to process scan for prediction.
+            SCAN_008:
+              type: string
+              description: Scan not found.
+        permission:
+          type: object
+          properties:
+            PERM_001:
+              type: string
+              description: Authentication required.
+            PERM_002:
+              type: string
+              description: You don't have permission to perform this action.
+        general:
+          type: object
+          properties:
+            GEN_001:
+              type: string
+              description: An unexpected error occurred. Please try again later.
+
+    ErrorHandlingGuide:
+      type: object
+      x-tags: [Errors]
+      description: |
+        # Error Handling Guide
+        
+        ## Response Format
+        
+        All API responses follow a consistent format:
+        
+        ```json
+        {
+          "is_success": true|false,
+          "errors": null|[array of error objects],
+          "data": null|object
+        }
+        ```
+        
+        ## Error Responses
+        
+        When an error occurs, the response will include:
+        
+        - `is_success`: Always false for error responses
+        - `errors`: Array of error objects, each with:
+          - `code`: A specific error code (e.g., "USER_001")
+          - `message`: A human-readable error message
+          - `field`: The specific field causing the error (if applicable)
+        - `data`: Always null for error responses
+        
+        Example error response:
+        
+        ```json
+        {
+          "is_success": false,
+          "errors": [
+            {
+              "code": "USER_004",
+              "message": "Password is required.",
+              "field": "password"
+            }
+          ],
+          "data": null
+        }
+        ```
+        
+        ## Error Categories
+        
+        ### Authentication Errors (AUTH_XXX)
+        
+        | Code | Message | Description |
+        |------|---------|-------------|
+        | AUTH_001 | Invalid credentials. Please check your email and password. | Login failed due to wrong email or password |
+        | AUTH_002 | Your account is inactive or has been locked. | User account is disabled |
+        | AUTH_003 | Your session has expired. Please log in again. | Token has expired |
+        | AUTH_004 | The OTP has expired. Please request a new one. | Password reset OTP timeout |
+        | AUTH_005 | This OTP has already been used. | OTP was already consumed |
+        | AUTH_006 | Invalid OTP. Please check and try again. | Wrong OTP provided |
+        | AUTH_007 | OTP not verified. Please verify your OTP first. | Password reset attempted without OTP verification |
+        
+        ### User/Radiologist Errors (USER_XXX)
+        
+        | Code | Message | Description |
+        |------|---------|-------------|
+        | USER_001 | Email address is required. | Missing email field |
+        | USER_002 | First name is required. | Missing first name field |
+        | USER_003 | Last name is required. | Missing last name field |
+        | USER_004 | Password is required. | Missing password field |
+        | USER_005 | Job title is required. | Missing job field |
+        | USER_006 | Gender is required. | Missing gender field |
+        | USER_007 | Phone number is required. | Missing phone number field |
+        | USER_008 | Date of birth is required. | Missing date of birth field |
+        | USER_009 | A user with this email already exists. | Email already registered |
+        | USER_010 | Invalid phone number format. | Phone number validation failed |
+        | USER_011 | Invalid date format. | Date format validation failed |
+        | USER_012 | Invalid job choice. Must be Doctor or Nurse. | Invalid job value |
+        | USER_013 | Invalid gender choice. Must be Male or Female. | Invalid gender value |
+        | USER_014 | No user found with this email address. | User not found |
+        | USER_015 | Password must be at least 8 characters. | Password too short |
+        
+        ### Patient Errors (PAT_XXX)
+        
+        | Code | Message | Description |
+        |------|---------|-------------|
+        | PAT_001 | Patient email is required. | Missing patient email |
+        | PAT_002 | Patient first name is required. | Missing patient first name |
+        | PAT_003 | Patient last name is required. | Missing patient last name |
+        | PAT_004 | Patient gender is required. | Missing patient gender |
+        | PAT_005 | Patient date of birth is required. | Missing patient DOB |
+        | PAT_006 | A patient with this email already exists. | Patient email already exists |
+        | PAT_007 | Invalid patient code. | Wrong invitation code |
+        | PAT_008 | You already have access to this patient. | Duplicate access request |
+        | PAT_009 | Patient not found. | Patient record not found |
+        
+        ### Scan Errors (SCAN_XXX)
+        
+        | Code | Message | Description |
+        |------|---------|-------------|
+        | SCAN_001 | Patient ID is required. | Missing patient ID for scan |
+        | SCAN_002 | Scan image is required. | Missing scan image file |
+        | SCAN_003 | Organ type is required. | Missing organ type |
+        | SCAN_004 | Invalid organ choice. Must be Heart, Brain, or Chest. | Invalid organ value |
+        | SCAN_005 | Failed to upload image. Please check format and size. | Image upload failed |
+        | SCAN_006 | You don't have access to this patient. | Unauthorized access to patient |
+        | SCAN_007 | Failed to process scan for prediction. | AI prediction failed |
+        | SCAN_008 | Scan not found. | Scan record not found |
+        
+        ### Permission Errors (PERM_XXX)
+        
+        | Code | Message | Description |
+        |------|---------|-------------|
+        | PERM_001 | Authentication required. | Unauthenticated request |
+        | PERM_002 | You don't have permission to perform this action. | Insufficient permissions |
+        
+        ### General Errors (GEN_XXX)
+        
+        | Code | Message | Description |
+        |------|---------|-------------|
+        | GEN_001 | An unexpected error occurred. Please try again later. | Server error |
+      example:
+        value: "This is a documentation schema only"
