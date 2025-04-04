@@ -1,5 +1,7 @@
 import abc
 from rest_framework import renderers
+from .errors import ErrorCodes
+from .error_messages import ERROR_MESSAGES
 
 class BaseAIModel(abc.ABC):
     @abc.abstractmethod
@@ -47,31 +49,127 @@ class BaseResponseRenderer(renderers.JSONRenderer):
                 return {
                     'is_success': False,
                     'data': None,
-                    'errors': self._format_errors(data)
+                    'errors': self._format_errors(data, response)
                 }
             return {
                 'is_success': True,
                 'data': data,
                 'errors': None
             }
+        return data
 
-    def _flatten_errors(self, errors):
+    def _format_errors(self, errors, response=None):
         """
-        Recursively flatten nested errors into a flat list of strings.
+        Format errors with error codes based on the response.
         """
-        flattened = []
-        if isinstance(errors, list):
-            for error in errors:
-                flattened.extend(self._flatten_errors(error))
-        elif isinstance(errors, dict):
-            for value in errors.values():
-                flattened.extend(self._flatten_errors(value))
-        else:
-            flattened.append(str(errors))
-        return flattened
-
-    def _format_errors(self, errors):
-        """
-        Format the errors to ensure they are returned as a list of strings.
-        """
-        return self._flatten_errors(errors)
+        # If errors is already in our format, return as is
+        if isinstance(errors, list) and all(isinstance(e, dict) and 'code' in e for e in errors):
+            return errors
+            
+        formatted_errors = []
+        
+        # Handle validation errors dict
+        if isinstance(errors, dict):
+            # Map common DRF fields to our error codes
+            field_to_error_code = {
+                'email': ErrorCodes.USER_001,
+                'first_name': ErrorCodes.USER_002,
+                'last_name': ErrorCodes.USER_003,
+                'password': ErrorCodes.USER_004,
+                'job': ErrorCodes.USER_005,
+                'gender': ErrorCodes.USER_006,
+                'phone_number': ErrorCodes.USER_007,
+                'date_of_birth': ErrorCodes.USER_008,
+                # Patient fields
+                'patient_email': ErrorCodes.PAT_001,
+                'patient_first_name': ErrorCodes.PAT_002,
+                'patient_last_name': ErrorCodes.PAT_003,
+                'patient_gender': ErrorCodes.PAT_004,
+                'patient_date_of_birth': ErrorCodes.PAT_005,
+                # Scan fields
+                'patient': ErrorCodes.SCAN_001,
+                'image_scan_url': ErrorCodes.SCAN_002,
+                'organ': ErrorCodes.SCAN_003,
+            }
+            
+            # Authentication errors
+            if 'detail' in errors:
+                detail = str(errors['detail']).lower()
+                if 'authenticated' in detail:
+                    formatted_errors.append({
+                        'code': ErrorCodes.PERM_001,
+                        'message': ERROR_MESSAGES[ErrorCodes.PERM_001]
+                    })
+                elif 'permission' in detail:
+                    formatted_errors.append({
+                        'code': ErrorCodes.PERM_002,
+                        'message': ERROR_MESSAGES[ErrorCodes.PERM_002]
+                    })
+                elif 'credentials' in detail or 'inactive' in detail:
+                    formatted_errors.append({
+                        'code': ErrorCodes.AUTH_001,
+                        'message': ERROR_MESSAGES[ErrorCodes.AUTH_001]
+                    })
+                else:
+                    formatted_errors.append({
+                        'code': ErrorCodes.GEN_001,
+                        'message': str(errors['detail'])
+                    })
+            else:
+                # Process field errors
+                for field, error_msgs in errors.items():
+                    if field not in ('detail', 'non_field_errors'):
+                        if not isinstance(error_msgs, list):
+                            error_msgs = [error_msgs]
+                            
+                        for msg in error_msgs:
+                            msg_str = str(msg).lower()
+                            error_code = field_to_error_code.get(field, ErrorCodes.GEN_001)
+                            
+                            # Further refine error code based on error message
+                            if 'already exists' in msg_str and field == 'email':
+                                error_code = ErrorCodes.USER_009
+                            elif 'format' in msg_str and field == 'phone_number':
+                                error_code = ErrorCodes.USER_010
+                            elif 'valid date' in msg_str or 'date format' in msg_str:
+                                error_code = ErrorCodes.USER_011
+                            elif 'valid choice' in msg_str and field == 'job':
+                                error_code = ErrorCodes.USER_012
+                            elif 'valid choice' in msg_str and field == 'gender':
+                                error_code = ErrorCodes.USER_013
+                            elif ('short' in msg_str or 'characters' in msg_str) and field == 'password':
+                                error_code = ErrorCodes.USER_015
+                                
+                            formatted_errors.append({
+                                'code': error_code,
+                                'message': ERROR_MESSAGES.get(error_code, str(msg)),
+                                'field': field
+                            })
+                
+                # Process non-field errors
+                if 'non_field_errors' in errors:
+                    non_field_errors = errors['non_field_errors']
+                    if not isinstance(non_field_errors, list):
+                        non_field_errors = [non_field_errors]
+                        
+                    for error in non_field_errors:
+                        formatted_errors.append({
+                            'code': ErrorCodes.GEN_001,
+                            'message': str(error)
+                        })
+        
+        # Handle string or other error types
+        elif errors:
+            formatted_errors.append({
+                'code': ErrorCodes.GEN_001,
+                'message': str(errors)
+            })
+            
+        # Fallback for empty errors
+        if not formatted_errors:
+            formatted_errors.append({
+                'code': ErrorCodes.GEN_001,
+                'message': "An unknown error occurred"
+            })
+            
+        return formatted_errors

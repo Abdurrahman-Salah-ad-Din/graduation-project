@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Patient, PatientRadiologistAccess
 from scans.serializers import PatientScanSerializer
+from core.exceptions import AppException
+from core.errors import ErrorCodes
 
 class PatientSerializer(serializers.ModelSerializer):
     """
@@ -41,12 +43,18 @@ class PatientAccessRequestSerialzier(serializers.Serializer):
         """
         Validate the invitation code and set the corresponding patient in the context.
         """
-        try:
-            patient = Patient.objects.get(code=value)
-        except Patient.DoesNotExist:
-            raise serializers.ValidationError("Invalid patient code.")
-        self.context['patient'] = patient
+        if not value:
+            raise AppException(ErrorCodes.PAT_007, field="code")
         return value
+    
+    def validate(self, attrs):
+        code = attrs.get('code')
+        try:
+            patient = Patient.objects.get(code=code)
+        except Patient.DoesNotExist:
+            raise AppException(ErrorCodes.PAT_007, field="code")
+        attrs['patient'] = patient
+        return attrs
     
     def create(self, validated_data):
         """
@@ -57,7 +65,7 @@ class PatientAccessRequestSerialzier(serializers.Serializer):
         radiologist = self.context['request'].user
 
         if PatientRadiologistAccess.objects.filter(patient=patient, radiologist=radiologist).exists():
-           raise serializers.ValidationError("You already have access to this patient.") 
+           raise AppException(ErrorCodes.PAT_008)
         
         access = PatientRadiologistAccess.objects.create(patient=patient, radiologist=radiologist)
         return access

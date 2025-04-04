@@ -4,6 +4,8 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Radiologist, PasswordResetOTP
+from core.exceptions import AppException
+from core.errors import ErrorCodes
 
 class RadiologistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,22 +66,34 @@ class LoginSerializer(TokenObtainPairSerializer):
     )
 
     def validate(self, attr):
-        data = super().validate(attr)
-        data.update(
-            {
+        if not attr.get('email'):
+            raise AppException(ErrorCodes.USER_001, field="email")
+        if not attr.get('password'):
+            raise AppException(ErrorCodes.USER_004, field="password")
+            
+        try:
+            data = super().validate(attr)
+            
+            data.update({
                 'radiologist': RadiologistSerializer(self.user).data
-            }
-        )
-        return data
+            })
+            return data
+        except Exception as e:
+            if "no active account" in str(e).lower():
+                raise AppException(ErrorCodes.AUTH_001, status_code=401)
+        raise
     
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate_email(self, value):
+        if not value:
+            raise AppException(ErrorCodes.USER_001, field="email")
+        
         try:
             self.user = Radiologist.objects.get(email=value)
         except Radiologist.DoesNotExist:
-            raise serializers.ValidationError("User with this email does not exist.")
+            raise AppException(ErrorCodes.USER_014, field="email")
         return value
     
     def save(self):
@@ -101,6 +115,16 @@ class OTPVerificationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     otp = serializers.CharField(max_length=8)
 
+    def validate_email(self, email):
+        if not email:
+            raise AppException(ErrorCodes.USER_001, field="email")
+        return email
+    
+    def validate_otp(self, otp):
+        if not otp:
+            raise AppException(ErrorCodes.AUTH_006, field="otp")
+        return otp
+
     def validate(self, attrs):
         email = attrs.get('email')
         otp = attrs.get('otp')
@@ -108,18 +132,19 @@ class OTPVerificationSerializer(serializers.Serializer):
         try:
             user = Radiologist.objects.get(email=email)
         except Radiologist.DoesNotExist:
-            raise serializers.ValidationError("User with this email does not exist.")
+            raise AppException(ErrorCodes.USER_014, field="email")
 
         try:
             reset_record = user.reset_otps.filter(is_used=False).latest('created_at')
         except PasswordResetOTP.DoesNotExist:
-            raise serializers.ValidationError("No active OTP found. Please request a new one.")
+            raise AppException(ErrorCodes.AUTH_007, 
+                              "No active OTP found. Please request a new one.")
 
         if reset_record.otp != otp:
-            raise serializers.ValidationError("Invalid OTP provided.")
+            raise AppException(ErrorCodes.AUTH_006, field="otp")
         
         if reset_record.is_expired():
-            raise serializers.ValidationError("The OTP has expired. Please request a new one.")
+            raise AppException(ErrorCodes.AUTH_004, field="otp")
 
         attrs['user'] = user
         attrs['reset_record'] = reset_record
@@ -137,24 +162,43 @@ class PasswordUpdateSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
+    def validate_email(self, email):
+        if not email:
+            raise AppException(ErrorCodes.USER_001, field="email")
+        return email
+    
+    def validate_new_password(self, new_password):
+        if not new_password:
+            raise AppException(ErrorCodes.USER_004, field="new_password")
+        if len(new_password) < 8:
+            raise AppException(ErrorCodes.USER_015, field="new_password")
+        return new_password
+
+    def validate_new_password(self, confirm_password):
+        if not confirm_password:
+            raise AppException(ErrorCodes.USER_004, field="confirm_password")
+        return confirm_password
+
     def validate(self, attrs):
         email = attrs.get('email')
 
         if attrs['new_password'] != attrs['confirm_password']:
-            raise serializers.ValidationError("Passwords do not match")
+            raise AppException(ErrorCodes.USER_015, 
+                              "Passwords do not match", field="confirm_password")
 
         try:
             user = Radiologist.objects.get(email=email)
         except Radiologist.DoesNotExist:
-            raise serializers.ValidationError("User with this email does not exist.")
+            raise AppException(ErrorCodes.USER_014, field="email")
 
         try:
             reset_record = user.reset_otps.filter(is_used=False, is_verified=True).latest('created_at')
         except PasswordResetOTP.DoesNotExist:
-            raise serializers.ValidationError("No verified OTP found. Please verify your OTP first.")
+            raise AppException(ErrorCodes.AUTH_007, 
+                              "No verified OTP found. Please verify your OTP first.")
         
         if reset_record.is_expired():
-            raise serializers.ValidationError("The OTP has expired. Please request a new one.")
+            raise AppException(ErrorCodes.AUTH_004)
 
         attrs['user'] = user
         attrs['reset_record'] = reset_record
