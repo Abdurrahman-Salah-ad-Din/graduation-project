@@ -95,10 +95,15 @@ class BaseResponseRenderer(renderers.JSONRenderer):
             # Authentication errors
             if 'detail' in errors:
                 detail = str(errors['detail']).lower()
-                if 'authenticated' in detail:
+                if ('authenticated' or 'Unauthorized') in detail:
                     formatted_errors.append({
                         'code': ErrorCodes.PERM_001,
                         'message': ERROR_MESSAGES[ErrorCodes.PERM_001]
+                    })
+                elif 'No Patient matches the given query.'.lower() in detail:
+                    formatted_errors.append({
+                        'code': ErrorCodes.PAT_009,
+                        'message': ERROR_MESSAGES[ErrorCodes.PAT_009]
                     })
                 elif 'permission' in detail:
                     formatted_errors.append({
