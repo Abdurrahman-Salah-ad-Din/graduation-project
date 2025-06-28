@@ -1,9 +1,12 @@
 from rest_framework import viewsets, permissions, views, status, generics
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken, BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Radiologist
 from .serializers import RadiologistSerializer, LoginSerializer, PasswordResetRequestSerializer, OTPVerificationSerializer, PasswordUpdateSerializer 
+from core.exceptions import AppException
+from core.errors import ErrorCodes
+from core.error_messages import ERROR_MESSAGES
 
 class RadiologistViewSet(viewsets.ModelViewSet):
     queryset = Radiologist.objects.all()
@@ -24,29 +27,63 @@ class LogoutView(views.APIView):
 
     def post(self, request):
         try:
-            refresh_token = request.data['refresh_token']
+            # Get the refresh token from the request data
+            refresh_token = request.data.get('refresh_token')
+
+            if not refresh_token:
+                # If refresh token is not provided, return an error
+                return Response(
+                {
+                    "is_success": False,
+                    "data": None,
+                    "errors": [{
+                        "code": ErrorCodes.AUTH_008,
+                        "message": ERROR_MESSAGES[ErrorCodes.AUTH_008],
+                        "field": "refresh_token",
+                    }]
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+            # Process the refresh token
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({"details": "Logout successful."}, status=status.HTTP_205_RESET_CONTENT)
+
+            # If the token is successfully blacklisted, return a success message
+            return Response({
+                "is_success": True,
+                "data": {"details": "Logout successful."},
+                "errors": None
+            }, status=status.HTTP_205_RESET_CONTENT)
+
         except Exception as e:
-            return Response({"error": f"Error invalidating token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+            # Catch any exception that occurs and format it as a custom error
+            return Response({
+                "is_success": False,
+                "data": None,
+                "errors": [{
+                    "code": "USER_002",
+                    "message": str(e),
+                    "field": "refresh_token"
+                }]
+            }, status=status.HTTP_400_BAD_REQUEST)
         
 class BasePasswordResetView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = None
     success_message = "Success"
+    error_code = None
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"details": self.success_message}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"is_success": True, "errors": None, "data": self.success_message}, status=status.HTTP_200_OK)
 
 class PasswordResetRequestView(BasePasswordResetView):
     serializer_class = PasswordResetRequestSerializer
     success_message = "OTP sent to your email."
-
+    
 class OTPVerificationView(BasePasswordResetView):
     serializer_class = OTPVerificationSerializer
     success_message = "OTP verified. You can now reset your password."
