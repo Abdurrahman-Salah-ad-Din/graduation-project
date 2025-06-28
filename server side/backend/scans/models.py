@@ -3,9 +3,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from patients.models import Patient
 
 class OrganChoices(models.TextChoices):
-    HEART = 'H', 'Heart'
     BRAIN = 'B', 'Brain'
     CHEST = 'C', 'Chest'
+    CHEST_CT = 'T', 'Chest CT'
+    BONE_FRACTURE = 'BF', 'Bone Fracture'
+    SKIN = 'S', 'Skin'
 
 class Disease(models.Model):
     name = models.CharField(primary_key=True, max_length=255, unique=True)
@@ -19,7 +21,7 @@ class Disease(models.Model):
 class PatientScan(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, related_name='scans', null=True)
     image_scan_url = models.ImageField(upload_to='patient_scans/')
-    organ = models.CharField(max_length=1, choices=OrganChoices)
+    organ = models.CharField(max_length=2, choices=OrganChoices)
     additional_info = models.CharField(blank=True, null=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     diseases = models.ManyToManyField(Disease, through='ScanDiseasePrediction')
