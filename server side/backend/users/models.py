@@ -35,6 +35,8 @@ class Radiologist(AbstractUser):
         MALE = 'M', 'Male'
         FEMALE = 'F', 'Female'
 
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     date_of_birth = models.DateField()
     job = models.CharField(max_length=1,choices=JobChoices.choices)
     gender = models.CharField(max_length=1, choices=GenderChoices.choices)
