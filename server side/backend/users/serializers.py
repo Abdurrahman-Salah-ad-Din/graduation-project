@@ -32,6 +32,16 @@ class RadiologistSerializer(serializers.ModelSerializer):
             'is_superuser': {'read_only': True},
         }
 
+    def validate_email(self, value):
+        if Radiologist.objects.filter(email=value).exists():
+            raise AppException(ErrorCodes.USER_009)
+        return value
+    
+    '''def validate_password(self, value):
+        if value.is_empty():
+            raise AppException(ErrorCodes.USER_004)
+        return value'''
+
     def create(self, validated_data):
         radiologist = Radiologist.objects.create_user(
             email=validated_data.pop('email'),
@@ -51,7 +61,7 @@ class RadiologistSerializer(serializers.ModelSerializer):
         if self.__is_admin():
             [setattr(fields[attribute], 'read_only', False) for attribute in ['is_staff', 'is_active', 'is_superuser', 'email'] if attribute in fields]
         return fields
-    
+
     def __is_admin(self):
         request = self.context.get('request')
         return request and request.user and request.user.is_staff
