@@ -7,7 +7,8 @@ class ErrorCodes:
     AUTH_005 = "AUTH_005"  # Password reset OTP already used
     AUTH_006 = "AUTH_006"  # Password reset OTP invalid
     AUTH_007 = "AUTH_007"  # Password reset OTP not verified
-    
+    AUTH_008 = "AUTH_008"  # Tokein is missing. 
+      
     # User/Radiologist errors (USER_XXX)
     USER_001 = "USER_001"  # Email required
     USER_002 = "USER_002"  # First name required
@@ -24,6 +25,7 @@ class ErrorCodes:
     USER_013 = "USER_013"  # Invalid gender choice
     USER_014 = "USER_014"  # Email not found
     USER_015 = "USER_015"  # Password too short
+    USER_016 = "USER_016"  # Invalid Email
     
     # Patient errors (PAT_XXX)
     PAT_001 = "PAT_001"  # Patient email required
@@ -35,6 +37,8 @@ class ErrorCodes:
     PAT_007 = "PAT_007"  # Invalid patient code
     PAT_008 = "PAT_008"  # Already have access to patient
     PAT_009 = "PAT_009"  # Patient not found
+    PAT_010 = "PAT_010"  # Max length exceeded
+    PAT_011 = "PAT_010"  # Blank patient code
     
     # Scan errors (SCAN_XXX)
     SCAN_001 = "SCAN_001"  # Patient ID required
@@ -52,3 +56,5 @@ class ErrorCodes:
     
     # General errors (GEN_XXX)
     GEN_001 = "GEN_001"  # General server error
+    GEN_002 = "GEN_002"  # Patient first name exceed the max length
+    GEN_003 = "GEN_003"  # Patient last name exceed the max length
