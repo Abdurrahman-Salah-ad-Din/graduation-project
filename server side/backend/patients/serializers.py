@@ -41,31 +41,66 @@ class PatientAccessRequestSerialzier(serializers.Serializer):
 
     def validate_code(self, value):
         """
-        Validate the invitation code and set the corresponding patient in the context.
+        Validate the invitation code.
+        
+        Args:
+            value: The invitation code to validate
+        
+        Raises:
+            AppException: If the code is empty or invalid
         """
         if not value:
             raise AppException(ErrorCodes.PAT_007, field="code")
         return value
-    
+
     def validate(self, attrs):
+        """
+        Validate the attributes and set the corresponding patient in the context.
+        
+        Args:
+            attrs: Dictionary of attributes to validate
+        
+        Returns:
+            dict: Validated attributes with patient added
+        
+        Raises:
+            AppException: If patient with given code doesn't exist
+        """
         code = attrs.get('code')
         try:
             patient = Patient.objects.get(code=code)
         except Patient.DoesNotExist:
             raise AppException(ErrorCodes.PAT_007, field="code")
+        
+        # Store patient in context for later use in create
+        self.context['patient'] = patient
         attrs['patient'] = patient
         return attrs
-    
+
     def create(self, validated_data):
         """
         Create an access record in the junction table.
-        Raises an error if access already exists.
+        
+        Args:
+            validated_data: Validated data for creating the access record
+        
+        Returns:
+            PatientRadiologistAccess: The created access record
+        
+        Raises:
+            AppException: If access already exists
         """
-        patient = self.context['patient']
+        patient = validated_data.get('patient') or self.context.get('patient')
         radiologist = self.context['request'].user
 
-        if PatientRadiologistAccess.objects.filter(patient=patient, radiologist=radiologist).exists():
-           raise AppException(ErrorCodes.PAT_008)
+        if not patient:
+            raise AppException(ErrorCodes.PAT_007, field="patient")
         
-        access = PatientRadiologistAccess.objects.create(patient=patient, radiologist=radiologist)
+        if PatientRadiologistAccess.objects.filter(patient=patient, radiologist=radiologist).exists():
+            raise AppException(ErrorCodes.PAT_008)
+        
+        access = PatientRadiologistAccess.objects.create(
+            patient=patient,
+            radiologist=radiologist
+        )
         return access
