@@ -9,6 +9,7 @@ ERROR_MESSAGES = {
     ErrorCodes.AUTH_005: "This OTP has already been used.",
     ErrorCodes.AUTH_006: "Invalid OTP. Please check and try again.",
     ErrorCodes.AUTH_007: "OTP not verified. Please verify your OTP first.",
+    ErrorCodes.AUTH_008: "Refresh Token is required.",
     
     # User/Radiologist errors
     ErrorCodes.USER_001: "Email address is required.",
@@ -26,6 +27,7 @@ ERROR_MESSAGES = {
     ErrorCodes.USER_013: "Invalid gender choice. Must be Male or Female.",
     ErrorCodes.USER_014: "No user found with this email address.",
     ErrorCodes.USER_015: "Password must be at least 8 characters.",
+    ErrorCodes.USER_016: "Enter a valid email address.",
     
     # Patient errors
     ErrorCodes.PAT_001: "Patient email is required.",
