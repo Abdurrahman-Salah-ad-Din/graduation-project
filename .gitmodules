@@ -1,0 +1,3 @@
+[submodule "client side/hakim"]
+	path = client side/hakim
+	url = https://github.com/Abdurrahman-Salah-ad-Din/hakim.git
