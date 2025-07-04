@@ -36,6 +36,11 @@ class BaseResponseRenderer(renderers.JSONRenderer):
         """
         Override the render method to customize the response format.
         """
+        response = renderer_context.get('response') if renderer_context else None
+
+        if response and response.status_code == 204:
+            return b''
+
         response_data = self._build_response_data(data, renderer_context)
         return super().render(response_data, accepted_media_type, renderer_context)
 
@@ -43,6 +48,9 @@ class BaseResponseRenderer(renderers.JSONRenderer):
         """
         Construct the response data structure based on the presence of exceptions.
         """
+        if isinstance(data, dict) and {'is_success','data','errors'}.issubset(data.keys()):
+            return data
+
         if renderer_context:
             response = renderer_context.get('response')
             if (response and response.exception) or (not 200 <= response.status_code < 300):
@@ -133,9 +141,21 @@ class BaseResponseRenderer(renderers.JSONRenderer):
                             
                             # Further refine error code based on error message
                             if 'already exists' in msg_str and field == 'email':
-                                error_code = ErrorCodes.USER_009
+                                if 'patient' in msg_str:
+                                    error_code = ErrorCodes.PAT_006
+                                else:
+                                    error_code = ErrorCodes.USER_009
+                            elif 'valid email address' in msg_str:
+                                error_code = ErrorCodes.USER_016
+                            elif 'field has no more' in msg_str and field == 'first_name':
+                                error_code = ErrorCodes.GEN_002
+                            elif 'field has no more' in msg_str and field == 'last_name':
+                                error_code = ErrorCodes.GEN_003
+                            elif 'field has no more' in msg_str:
+                                error_code = ErrorCodes.PAT_010
                             elif 'format' in msg_str and field == 'phone_number':
                                 error_code = ErrorCodes.USER_010
+                            
                             elif 'valid date' in msg_str or 'date format' in msg_str:
                                 error_code = ErrorCodes.USER_011
                             elif 'valid choice' in msg_str and field == 'job':
