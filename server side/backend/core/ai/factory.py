@@ -1,18 +1,18 @@
 from django.conf import settings
-from .tf_classification import TFClassificationModel
-from .pytorch_classification import PytorchClassification
+from .chest_pytorch_classification import ChestPytorchClassification
 from .brain_pytorch_classification import BrainPyTorchClassification
 from scans.models import OrganChoices
 from .chest_ct_tf_classification import ChestCTTensorFlowClassification
 from .bone_fracture_tf_classification import BoneFractureTensorFlowClassification
 from .skin_tf_classification import SkinTensorFlowClassification
+from ..base import BaseAIModel
 
-def get_ai_model(organ):
+def get_ai_model(organ) -> BaseAIModel :
     if organ == OrganChoices.CHEST:
         model_path = settings.CHEST_MODEL_PATH
         labels = settings.CHEST_MODEL_LABELS
         target_size = settings.CHEST_MODEL_TARGET_SIZE
-        return PytorchClassification(model_path=model_path, target_size=target_size, labels=labels)
+        return ChestPytorchClassification(model_path=model_path, target_size=target_size, labels=labels)
     elif organ == OrganChoices.BRAIN:
         model_path = settings.BRAIN_MODEL_PATH
         labels = settings.BRAIN_MODEL_LABELS
