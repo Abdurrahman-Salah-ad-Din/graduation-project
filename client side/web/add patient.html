@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Patient</title>
+    <link rel="stylesheet" href="css/add patient.css">
+    <link rel="stylesheet" href="css/nav bar.css">
+    <script src="js/add patient.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Navigation Bar</div>
+        <nav class="main-menu">
+            <ul>
+                <nav class="main-menu">
+                    <ul>
+                        <li><a href="dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                        <li><a href="staff.html"><i class="icon">👨‍⚕️</i> Staff</a></li>
+                        <li><a href="patients.html"><i class="icon">👥</i> Patients</a></li>
+                        <li class="active"><a href="add patient.html"><i class="icon">➕</i> Add Patient</a></li>
+                        <li><a href="scan.html"><i class="icon">🖥️</i> Scan</a></li>
+                        <li><a href="grant access.html"><i class="icon">🔑</i> Grant Access</a></li>
+                    </ul>
+                </nav>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <button id="logout-btn" class="logout-button">Logout</button>
+        <h1>Add patient</h1>
+        
+        <form class="patient-form">
+            <!-- Combined Profile Picture and Basic Information Section -->
+            <div class="combined-section">
+                <!-- Basic Information Section -->
+                <div class="basic-info-section">
+                    <h2>Basic information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Birth Date</label>
+                            <input type="date" value="" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select required>
+                                <option value="male" selected>Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-section">
+                <h2>Contact information</h2>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input id="phone" type="text" value="+20" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input id="email" type="email" value="" required>
+                </div>
+            </div>
+            
+            <!-- Scan Section -->
+            <div class="form-section">
+                <h2>Scan</h2>
+                <div class="form-group">
+                    <label>Organ</label>
+                    <select id="organSelect" required>
+                        <option value="B">Brain</option>
+                        <option value="C">Chest</option>
+                        <option value="T">Chest CT</option>
+                        <option value="BF">Bone Fracture</option>
+                        <option value="S">Skin</option>
+                    </select>
+                </div>
+                <button type="button" class="upload-btn">Upload Scan</button>
+            </div>
+            
+            <!-- Additional Information -->
+            <div class="form-section">
+                <h2>Additional information</h2>
+                <textarea class="additional-info"></textarea>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Patient</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
