@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients</title>
+    <link rel="stylesheet" href="css/patients.css">
+    <link rel="stylesheet" href="css/nav bar.css">
+    <script src="js/patients.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Navigation Bar</div>
+        <nav class="main-menu">
+            <ul>
+                <li><a href="dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                <li><a href="staff.html"><i class="icon">👨‍⚕️</i> Staff</a></li>
+                <li class="active"><a href="patients.html"><i class="icon">👥</i> Patients</a></li>
+                <li><a href="add patient.html"><i class="icon">➕</i> Add Patient</a></li>
+                <li><a href="scan.html"><i class="icon">🖥️</i> Scan</a></li>
+                <li><a href="grant access.html"><i class="icon">🔑</i> Grant Access</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <button id="logout-btn" class="logout-button">Logout</button>
+        <h1>Patients</h1>
+
+        <div class="search-container">
+            <input type="text" id="patientSearch" placeholder="Search patients by name..." class="search-input">
+            <button id="clearSearch" class="clear-button">Clear</button>
+        </div>
+
+        <div class="patient-list" id="patientList">
+            <!-- Patients will be loaded here dynamically -->
+            <div class="loading">Loading patients...</div>
+        </div>
+        <a href="add patient.html"><div class="add-patient">+ Add Patient</div></a>
+    </div>
+</body>
+</html>

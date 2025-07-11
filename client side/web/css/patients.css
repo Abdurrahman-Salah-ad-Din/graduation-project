@@ -1,0 +1,321 @@
+/* patients.css - Add this to your css folder */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding: 20px 0;
+}
+
+.logo {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-menu {
+    margin-top: 20px;
+}
+
+.main-menu ul {
+    list-style: none;
+}
+
+.main-menu li {
+    margin-bottom: 5px;
+}
+
+.main-menu a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    transition: all 0.3s;
+}
+
+.main-menu a:hover {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.main-menu .active a {
+    background-color: #3498db;
+    color: white;
+}
+
+.main-menu .icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    margin-left: 50px;
+    max-width: calc(100% - 250px);
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.search-container {
+    display: flex;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.clear-button {
+    padding: 10px 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.clear-button:hover {
+    background-color: #d32f2f;
+}
+
+.patient-list {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.patient-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #edf2f7;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.patient-entry:last-child {
+    border-bottom: none;
+}
+
+.patient-entry:hover {
+    background-color: #f8fafc;
+}
+
+.patient-entry strong {
+    color: #2d3748;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.patient-entry div {
+    color: #718096;
+    font-size: 14px;
+}
+
+.delete-link,
+.add-scan {
+    color: #4299e1;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.delete-link:hover,
+.add-scan:hover {
+    color: white;
+    background-color: #01679e;
+}
+
+a{
+    text-decoration: none;
+}
+
+.add-patient {
+    display: block;
+    text-align: center;
+    position: relative;
+    width: 25%;
+    left: 70%;
+    bottom: 0.5%;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px 5px;
+    border-radius: 5px;
+    transition: all 0.3s;
+    background-color: #4299e1;
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+    margin: 4% 0px -60px 0px;
+}
+
+.add-patient:hover {
+    background-color: #01679e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+}
+
+
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #c53030;
+}
+
+.loading, .error, .no-patients {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+    font-size: 16px;
+}
+
+.error {
+    color: #e53e3e;
+}
+
+.success {
+    background-color: #c6f6d5;
+    color: #22543d;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.patient-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #edf2f7;
+    transition: all 0.3s;
+}
+
+.patient-entry:hover {
+    background-color: #f8fafc;
+}
+
+.patient-entry div {
+    flex: 1;
+}
+
+.patient-entry strong {
+    color: #2d3748;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.patient-entry br {
+    display: none;
+}
+
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 10px 0;
+    }
+    
+    .logo, .main-menu span {
+        display: none;
+    }
+    
+    .main-menu a {
+        justify-content: center;
+        padding: 15px 0;
+    }
+    
+    .main-menu .icon {
+        margin-right: 0;
+        font-size: 20px;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+        max-width: calc(100% - 70px);
+        padding: 15px;
+    }
+    
+    .patient-entry {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+
+    .patient-entry {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .delete-link,
+    .add-scan {
+        margin-left: 0;
+        margin-top: 10px;
+        align-self: flex-end;
+    }
+
+    .add-patient {
+        display: block;
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 14px;
+        bottom: 15px;
+        left: auto;
+        margin: 30px 0px -60px 0px;
+    }
+}
+
