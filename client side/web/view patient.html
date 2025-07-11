@@ -1,0 +1,86 @@
+<!-- view patient.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Patient</title>
+    <link rel="stylesheet" href="css/view patient.css">
+    <link rel="stylesheet" href="css/nav bar.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Navigation Bar</div>
+        <nav class="main-menu">
+            <ul>
+                <li><a href="dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                <li><a href="staff.html"><i class="icon">👨‍⚕️</i> Staff</a></li>
+                <li class="active"><a href="patients.html"><i class="icon">👥</i> Patients</a></li>
+                <li><a href="add patient.html"><i class="icon">➕</i> Add Patient</a></li>
+                <li><a href="scan.html"><i class="icon">🖥️</i> Scan</a></li>
+                <li><a href="grant access.html"><i class="icon">🔑</i> Grant Access</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <button id="logout-btn" class="logout-button">Logout</button>
+        <h1>Patient Details</h1>
+        
+        <div class="patient-info">
+            <!-- Basic Information Section -->
+            <div class="info-section">
+                <h2>Basic information</h2>
+                <div class="info-row">
+                    <div class="info-group" id="basic-info">
+                        <!-- Will be filled by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Scans Display Section -->
+            <div class="info-section">
+                <h2>Scans</h2>
+                <div id="scans-display">
+                    <!-- Recent scan will be displayed here -->
+                    <div id="main-scan" class="main-scan-container"></div>
+                    
+                    <!-- Other scans will be displayed here -->
+                    <div id="other-scans" class="other-scans-container"></div>
+                </div>
+            </div>
+            
+            <!-- Add Scan Section -->
+            <div class="info-section">
+                <h2>Add New Scan</h2>
+                <div class="form-group">
+                    <label>Organ</label>
+                    <select id="organSelect" required>
+                        <option value="B">Brain</option>
+                        <option value="C">Chest</option>
+                        <option value="T">Chest CT</option>
+                        <option value="BF">Bone Fracture</option>
+                        <option value="S">Skin</option>
+                    </select>
+                </div>
+                <div class="upload-container">
+                    <button type="button" class="upload-btn" id="upload-btn">Upload Scan</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+                <div class="preview-container" id="preview-container" style="display: none;">
+                    <img id="preview-image" class="preview-image" alt="Preview">
+                    <div id="file-info" class="file-info"></div>
+                </div>
+                <div class="form-group">
+                    <label>Additional Information</label>
+                    <textarea id="additionalInfo" class="additional-info"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-scan">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submit-scan">Submit Scan</button>
+                </div>
+            </div>
+
+    <script src="js/view patient.js"></script>
+</body>
+</html>
