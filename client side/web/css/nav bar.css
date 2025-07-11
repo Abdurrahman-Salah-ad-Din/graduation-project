@@ -1,0 +1,75 @@
+.sidebar {
+    width: 250px;
+    background-color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    padding: 20px 0;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #edf2f7;
+    margin-bottom: 20px;
+}
+
+.main-menu ul {
+    list-style: none;
+}
+
+.main-menu li {
+    margin-bottom: 5px;
+}
+
+.main-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #4a5568;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+
+.main-menu a:hover {
+    background-color: #ebf8ff;
+    color: #4299e1;
+
+}
+
+.main-menu .active a {
+    background-color: #ebf8ff;
+    color: #4299e1;
+    border-left: 3px solid #4299e1;
+}
+
+.main-menu .icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.main-menu li:not(.active) a:hover {
+    transform: translate(7px);
+    width: 97.4%;
+}
+
+
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background: #01679e;
+}
