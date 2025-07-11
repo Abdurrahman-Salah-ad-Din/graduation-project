@@ -1,0 +1,61 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="css/dashboard.css">
+        <link rel="stylesheet" href="css/nav bar.css">
+        <script src="js/dashboard.js"></script>
+    </head>
+    <body>
+        <div class="sidebar">
+            <div class="logo">Navigation Bar</div>
+            <nav class="main-menu">
+                <ul>
+                    <nav class="main-menu">
+                        <ul>
+                            <li class="active"><a href="dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                            <li><a href="staff.html"><i class="icon">👨‍⚕️</i> Staff</a></li>
+                            <li><a href="patients.html"><i class="icon">👥</i> Patients</a></li>
+                            <li><a href="add patient.html"><i class="icon">➕</i> Add Patient</a></li>
+                            <li><a href="scan.html"><i class="icon">🖥️</i> Scan</a></li>
+                            <li><a href="grant access.html"><i class="icon">🔑</i> Grant Access</a></li>
+                        </ul>
+                    </nav>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <button id="logout-btn" class="logout-button">Logout</button>
+            <h1>Diagnosis history</h1>
+            
+            <form class="time-filters">
+                <button type="button" class="time-filter active" id="filter1" onclick="select_filter(1)">All patients</button>
+                <button type="button" class="time-filter" id="filter2" onclick="select_filter(2)">Last 30 days</button>
+                <button type="button" class="time-filter" id="filter3" onclick="select_filter(3)">Last 60 days</button>
+                <button type="button" class="time-filter" id="filter4" onclick="select_filter(4)">Last 90 days</button>
+            </form>        
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Patients</h3>
+                    <p id="patients_num"></p>
+                    <small>The total number of patients under your care.</small>
+                </div>
+                <div class="stat-card 2">
+                    <h3>Cases</h3>
+                    <p id="cases_num"></p>
+                    <small>The total number of diagnoses recorded.</small>
+                </div>
+            </div>
+            
+            <h2 class="section-title">History</h2>
+            
+            <div class="patients-grid">
+                
+            </div>
+            <a href="add patient.html"><div class="add-patient">+ Add Patient</div></a>
+        </div>
+    </body>
+    </html>
