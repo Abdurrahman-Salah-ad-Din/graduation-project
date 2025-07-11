@@ -6,7 +6,7 @@
   </a>
 </p>
 
-A full-stack medical diagnostic platform developed as a graduation project. It enables radiologists to manage patients, upload scan images, and receive AI-powered disease predictions in real time. It provides secure authentication for radiologists, robust management of patient records with controlled access, and seamless integration of advanced AI models for scan image analysis and disease prediction. Built with a Django REST API backend and a cross-platform desktop application frontend.
+A full-stack medical diagnostic platform developed as a graduation project. It enables radiologists to manage patients, upload scan images, and receive AI-powered disease predictions in real time. It provides secure authentication for radiologists, robust management of patient records with controlled access, and seamless integration of advanced AI models for scan image analysis and disease prediction. Built with a Django REST API backend, a cross-platform desktop application and website.
 
 ---
 
@@ -34,22 +34,24 @@ A full-stack medical diagnostic platform developed as a graduation project. It e
    - Modular, scalable loading system  
    - Easy to plug new models
 
-3. **Desktop application**  
+3. **Desktop Application**  
    - Desktop application via Compose Multiplatform  
    - Login, patient form, image upload, prediction display  
    - Light & Dark mode toggle  
    - Cross-platform support (Linux / Windows / macOS)
 
-4. **Web application**
+4. **Web Application**
    - Web application via Vanilla JS with HTML & CSS
-   - Simple web view for availability
+   - Simple website for availability
 
 ---
 
 ## Features
 
 - Secure JWT-based authentication  
+- Password resetting via forgot password
 - Radiologist & Patient account management  
+- Role-Based Access Control (RBAC) to ensure secure and restricted access to patient data.
 - AI-powered disease prediction using pre-trained models  
 - Unified API response structure  
 - PostgreSQL database support  
@@ -109,8 +111,9 @@ DEFAULT_FROM_EMAIL=your@email.com
 ## Tech Stack
 
 - **Backend:** [Django](https://www.djangoproject.com/), [Django REST Framework](https://www.django-rest-framework.org/), [SimpleJWT](https://github.com/jazzband/django-rest-framework-simplejwt), [PostgreSQL](https://www.postgresql.org/), [drf-spectacular](https://drf-spectacular.readthedocs.io/), [django-silk](https://github.com/jazzband/django-silk)  
-- **AI Models:** [PyTorch](https://pytorch.org/) & [TensorFlow](https://www.tensorflow.org/)  
+- **AI Models:** [PyTorch](https://pytorch.org/), [TensorFlow](https://www.tensorflow.org/)  
 - **Destop:** [Kotlin](https://kotlinlang.org/), [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)  
+- **Web:** [Javascript](https://www.javascript.com/), [HTML](https://developer.mozilla.org/en-US/docs/Glossary/HTML5), [CSS](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics)
 - **Version Control:** [Git](https://git-scm.com/), [GitHub](https://github.com/)
 
 ---
@@ -120,7 +123,7 @@ DEFAULT_FROM_EMAIL=your@email.com
 ### 1. Clone with Submodules
 
 ```bash
-git clone --recurse-submodules https://github.com/<your-org-or-username>/graduation-project.git
+git clone --recurse-submodules https://github.com/Abdurrahman-Salah-ad-Din/graduation-project.git
 cd graduation-project
 ```
 
@@ -136,6 +139,12 @@ python manage.py makemigrations users patients scans
 python manage.py migrate
 python manage.py runserver
 ```
+---
+# Contributors
+
+- [Abdurrahman Salah ad-Din](https://github.com/Abdurrahman-Salah-ad-Din)
+- [Ali Muhammed](https://github.com/AliiMuhammedd)
+- [Mohamed Reda](https://github.com/MoRedaJn)
 
 ---
 
@@ -144,4 +153,5 @@ python manage.py runserver
 This project is licensed under the [Creative Commons Attribution‑NonCommercial‑ShareAlike 4.0 International License](LICENSE).  
 You may not use this work for commercial purposes, and any derivative works must be shared under the same terms.
 
-© 2025 Abdurrahman Salah ad‑Din
+© 2025 Abdurrahman Salah ad‑Din, Ali Muhammed
+
