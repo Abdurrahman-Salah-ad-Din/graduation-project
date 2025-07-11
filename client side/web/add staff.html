@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Staff</title>
+    <link rel="stylesheet" href="css/add staff.css">
+    <link rel="stylesheet" href="css/nav bar.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <script src="js/add staff.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Navigation Bar</div>
+        <nav class="main-menu">
+            <ul>
+                <nav class="main-menu">
+                    <ul>
+                        <li><a href="dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                        <li class="active"><a href="staff.html"><i class="icon">👨‍⚕️</i> Staff</a></li>
+                        <li><a href="patients.html"><i class="icon">👥</i> Patients</a></li>
+                        <li><a href="add patient.html"><i class="icon">➕</i> Add Patient</a></li>
+                        <li><a href="scan.html"><i class="icon">🖥️</i> Scan</a></li>
+                        <li><a href="grant access.html"><i class="icon">🔑</i> Grant Access</a></li>
+                    </ul>
+                </nav>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <button id="logout-btn" class="logout-button">Logout</button>
+        <h1>Add Staff</h1>
+        
+        <form class="patient-form">
+            <!-- Combined Profile Picture and Basic Information Section -->
+            <div class="combined-section">
+                <!-- Basic Information Section -->
+                <div class="basic-info-section">
+                    <h2>Basic information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Birth Date</label>
+                            <input type="date" value="" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select required>
+                                <option value="M" selected>Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-section">
+                <h2>Contact information</h2>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input id="phone" type="text" value="+20" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input id="email" type="email" value="" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="pass" class="pass1" type="password" value="" required>
+                    <i class="fa-solid fa-eye-slash" id = "password_eye1" onclick="show_pass(1)"></i>
+                </div>
+                <div class="form-group">
+                    <label>Confirm password</label>
+                    <input id="pass" class="pass2" type="password" value="" required>
+                    <i class="fa-solid fa-eye-slash" id = "password_eye2" onclick="show_pass(2)"></i>
+                </div>
+            </div>
+            
+            <!-- Scan Section -->
+            <div class="form-section">
+                <h2>Role</h2>
+                <div class="form-group">
+                    <label>Job</label>
+                    <select id="role" required>
+                        <option value="D">Doctor</option>
+                        <option value="N">Nurse</option>
+                    </select>
+                </div>
+            </div>
+            
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Staff</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
