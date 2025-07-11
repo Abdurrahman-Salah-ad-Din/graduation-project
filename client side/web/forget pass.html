@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/forget pass.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <script src="js/forget pass.js"></script>
+    <title>Foget password</title>
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div>
+                <i class="fa-regular fa-envelope fa-4x"></i>
+            </div>
+            <h2>Forget password</h2>
+            <p>No worries, we will send you reset instructions.</p>
+            <form>
+            <div class="input-group">
+                <input id = "user" type="text" required>
+                <label class="email">Email</label>
+                <i class="fa-solid fa-xmark" onclick="clear_user()"></i>
+                <button type="submit" onclick="check_mail(event)" class="login-btn">Reset password</button>
+                <a href="login.html" class="back">Back to log in</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
