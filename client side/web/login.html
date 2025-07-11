@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <script src="js/login.js" defer></script>
+    <title>Login Page</title>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+        </div>
+        <div class="right-section">
+            <div class="login-box">
+                <h2>Login</h2>
+                <p>Enter your email and password to access the system</p>
+                <form class="form">
+                    <div class="input-group">
+                        <input id = "user" type="text" required>
+                        <label class="email">Email</label>
+                        <i class="fa-solid fa-xmark" onclick="clear_user()"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="pass" required>
+                        <label class="password">Password</label>
+                        <i class="fa-solid fa-eye-slash" id = "password id" onclick="show_pass()"></i>
+                    </div>
+                    <a href="forget pass.html" class="forgot-password">Forgot password?</a>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
