@@ -1,0 +1,222 @@
+/* grant-access.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding: 20px 0;
+}
+
+.logo {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-menu {
+    margin-top: 20px;
+}
+
+.main-menu ul {
+    list-style: none;
+}
+
+.main-menu li {
+    margin-bottom: 5px;
+}
+
+.main-menu a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    transition: all 0.3s;
+}
+
+.main-menu a:hover {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.main-menu .active a {
+    background-color: #3498db;
+    color: white;
+}
+
+.main-menu .icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    margin-left: 50px;
+    max-width: calc(100% - 250px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+    text-align: left;
+    width: 100%;
+    max-width: 600px; 
+}
+
+
+.access-form {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #718096;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.btn {
+    background-color: #4299e1;
+    color: #fff;    
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    font-size: 14px;
+    width: 100%;
+}
+
+.btn:hover {
+    background: #01679e;
+}
+
+.logout-button {
+    position: fixed; /* Changed from absolute to fixed */
+    top: 30px;
+    right: 30px;
+    padding: 8px 16px;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.logout-button:hover {
+    background-color: #c53030;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 10px 0;
+    }
+    
+    .logo, .main-menu span {
+        display: none;
+    }
+    
+    .main-menu a {
+        justify-content: center;
+        padding: 15px 0;
+    }
+    
+    .main-menu .icon {
+        margin-right: 0;
+        font-size: 20px;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+        max-width: calc(100% - 70px);
+        padding: 20px;
+    }
+    
+    .access-form {
+        padding: 20px;
+        margin-top: 10px;
+    }
+    
+    .logout-button {
+        top: 20px;
+        right: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 20px;
+    }
+    
+    .access-form {
+        padding: 15px;
+    }
+    
+    .form-group input {
+        padding: 10px 12px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+    }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grant Access</title>
+    <link rel="stylesheet" href="css/grant access.css">
+    <link rel="stylesheet" href="css/nav bar.css">
+    <script src="js/grant access.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Navigation Bar</div>
+        <nav class="main-menu">
+            <ul>
+                <li><a href="dashboard.html"><i class="icon">📊</i> Dashboard</a></li>
+                <li><a href="staff.html"><i class="icon">👨‍⚕️</i> Staff</a></li>
+                <li><a href="patients.html"><i class="icon">👥</i> Patients</a></li>
+                <li><a href="add patient.html"><i class="icon">➕</i> Add Patient</a></li>
+                <li><a href="scan.html"><i class="icon">🖥️</i> Scan</a></li>
+                <li class="active"><a href="grant-access.html"><i class="icon">🔑</i> Grant Access</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <button id="logout-btn" class="logout-button">Logout</button>
+        <h1>Grant Access to Patient Records</h1>
+        
+        <div class="access-form">
+            <div class="form-group">
+                <label for="patient-id">Patient ID Code</label>
+                <input type="text" id="patient-id" name="patient-id" placeholder="Enter patient ID code">
+            </div>
+            
+            <button type="submit" class="btn" id="grant-access-btn">Grant Access</button>
+        </div>
+    </div>
+</body>
+</html>
